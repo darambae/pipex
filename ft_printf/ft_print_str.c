@@ -5,21 +5,26 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/19 17:11:27 by dabae             #+#    #+#             */
-/*   Updated: 2023/10/19 17:34:10 by dabae            ###   ########.fr       */
+/*   Created: 2023/10/23 11:33:07 by dabae             #+#    #+#             */
+/*   Updated: 2023/10/25 15:15:11 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 
-void	ft_print_str(const char *str, t_print *set)
+int	ft_print_str(const char *str)
 {
-    int	i;
+	int	i;
 
 	if (!str)
-		return ;
+	{
+		write(1, "(null)", 6);
+		return (6);
+	}
 	i = 0;
 	while (str[i])
 	{
-		set->n += write(1, &str[i], 1);
+		write(1, &str[i], 1);
 		i++;
 	}
+	return (i);
 }

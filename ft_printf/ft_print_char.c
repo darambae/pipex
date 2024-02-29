@@ -5,12 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/19 17:10:57 by dabae             #+#    #+#             */
-/*   Updated: 2023/10/19 17:26:37 by dabae            ###   ########.fr       */
+/*   Created: 2023/10/23 11:26:19 by dabae             #+#    #+#             */
+/*   Updated: 2023/10/24 14:30:17 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "ft_printf.h"
 
-void	ft_print_char(char c, t_print *set)
+int	ft_print_char(char c)
 {
-    set->n += write(1, &c, 1);
+	return (write(1, &c, 1));
 }

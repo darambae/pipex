@@ -5,23 +5,17 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/19 17:13:03 by dabae             #+#    #+#             */
-/*   Updated: 2023/10/19 17:16:11 by dabae            ###   ########.fr       */
+/*   Created: 2023/10/23 11:41:04 by dabae             #+#    #+#             */
+/*   Updated: 2023/10/25 14:52:05 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-static const char   *hex_low = "0123456789abcdef";
-static const char   *hex_up = "0123456789ABCDEF";
+#include "ft_printf.h"
 
-static	int	ft_count_digit(int n)
+static int	ft_count_digit(unsigned int n)
 {
 	int	count;
 
 	count = 1;
-	if (n < 0)
-	{
-		n *= -1;
-		count++;
-	}
 	if (n > 15)
 	{
 		while (n > 15)
@@ -32,44 +26,48 @@ static	int	ft_count_digit(int n)
 	}
 	return (count);
 }
-static void ft_fill_hex(char *res, unsigned int n, int capital)
-{
-    if (n == 0)
-        res[0] = '0';
-    else
-    {
-        while (n)
-        {
-            if (capital)
-                *res-- = hex_up[n % 16];
-            else
-                *res-- = hex_low[n % 16];
-            n /= 16;
-        }
-    }
-}
-void	ft_print_hex(unsigned int n, t_print *set, int capital)
-{
-    char    res[9];
-    int count;
 
-    count = ft_count_digit(n);
-    if (n < 0)
-    {
-        *res = '-';
-        n *= -1;
-    }
-    else if (n == 0)
-        count = 1;
-    ft_fill_hex(res + count - 1, n, capital);
-    if (set->preci == 0 && (set->zero || n == 0))
-    {
-        set->n = 0;
-        return ;
-    }
-    else if (set->zero == 1 && set->left == 1)
-    {
-        set->n = 0;
-        return ;
-    }
+static void	ft_fill_hex(char *res, unsigned int n, int capital)
+{
+	char	*hex_up;
+	char	*hex_low;
+
+	hex_up = ft_strdup("0123456789ABCDEF");
+	hex_low = ft_strdup("0123456789abcdef");
+	if (!hex_up || !hex_low)
+		return ;
+	if (n == 0)
+		*res = '0';
+	else
+	{
+		while (n)
+		{
+			if (capital)
+				*res-- = hex_up[n % 16];
+			else
+				*res-- = hex_low[n % 16];
+			n /= 16;
+		}
+	}
+	free(hex_up);
+	free(hex_low);
+}
+
+int	ft_print_hex(unsigned int n, int capital)
+{
+	int		num_print;
+	int		count;
+	char	*res;
+
+	count = ft_count_digit(n);
+	if (n == 0)
+		count = 1;
+	res = (char *)malloc(sizeof(char) * (count + 1));
+	if (!res)
+		return (0);
+	ft_memset(res, '\0', count + 1);
+	ft_fill_hex(res + count - 1, n, capital);
+	num_print = ft_print_str(res);
+	free(res);
+	return (num_print);
 }
