@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:52 by dabae             #+#    #+#             */
-/*   Updated: 2024/02/29 09:44:40 by dabae            ###   ########.fr       */
+/*   Updated: 2024/02/29 19:24:15 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ typedef struct s_pipe
 	int		out_fd;
 	bool	here_doc;
 	char	***cmd_args;
-	char	**paths;
 }	t_pipe;
 
 #endif
