@@ -72,22 +72,32 @@ static void	pipex(t_pipe *args)
 	int	end[2];
 	int	pid1;
 
-	pipe(end);
-	args->in_fd = open(args->infile, O_RDONLY);
-	args->out_fd = open(args->outfile, O_WRONLY | O_CREAT, 0777);
-	if (args->in_fd < 0 || args->out_fd < 0)
-		return (EXIT_FAILURE);
+	if (pipe(end) == -1)
+		perror("pipe error");
+	//end[0] = read end, end[1] = write end
+	
 	pid1 = fork();
 	if (pid1 < 0)
 		perror("Fork error");
 	else if (pid1 == 0)	
 	{
 		//child process
-		dup2()
+		args->in_fd = open(args->infile, O_RDONLY);
+		if (args->in_fd < 0)
+			return (EXIT_FAILURE);
+		dup2(args->in_fd, STDIN_FILENO);
+		close(end[0]);
+		execve(get_cmd_path(args));
 	}
 	else
 	{
 		//parent process
+		args->out_fd = open(args->outfile, O_WRONLY | O_CREAT, 0777);
+		if (args->out_fd < 0)
+			return (EXIT_FAILURE);
+		dup2(args->out_fd, STDOUT_FILENO);
+		close(end[1]);
+		execve()
 	}
 
 }
@@ -103,39 +113,5 @@ int	main(int ac, char **av)
 	args->paths = ft_split(getenv("PATH"), ':');
 	pipex(args);
 
-	
-	
-	
-	// int	pid1 = fork();
-	// int	infile;
-	// int	outfile;
-
-	// infile = open("infile", O_RDONLY, 0777);
-	// outfile = open("outfile", O_WRONLY | O_CREAT, 0777);
-	// if (infile == -1)
-	// 	perror("Failed reading infile");
-	// if (pipe(fd) == -1)
-	// 	perror("Pipe Error");
-	// if (pid1 < 0)
-	// 	perror("Fork error");
-	// if (pid1 == 0) //child process
-	// {
-	// 	dup2(fd[0], STDIN_FILENO);
-	// 	close(fd[0]);
-	// 	execve();
-	// }
-	// else
-	// {
-	// 	dup2(fd[1], STDOUT_FILENO);
-	// 	close(fd[1]);
-	// 	execve();
-	// }
-	/*
-	init_av()
-	check_av()
-	read_file()
-	pipe()
-	write_file()
-	*/
 	return (0);
 }
