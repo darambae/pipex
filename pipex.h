@@ -28,7 +28,7 @@ typedef struct s_pipe
 	int		out_fd;
 	bool	here_doc;
 	char	***cmd_args;
-	char	*paths;
+	char	**paths;
 }	t_pipe;
 
 #endif
