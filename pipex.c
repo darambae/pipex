@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/02/28 20:27:44 by dabae            ###   ########.fr       */
+/*   Updated: 2024/02/29 09:53:49 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	init_av(int ac, char **av, t_pipe *args, char **envp)
 	i = 0;
 	while (i < ac - 1)
 	{
-		args_arr[i] = ft_split(av[i + 2], " ");
+		args_arr[i] = ft_split(av[i + 2], ' ');
 		i++;
 	}
 	args_arr[i] = NULL;
@@ -57,19 +57,15 @@ static void	init_av(int ac, char **av, t_pipe *args, char **envp)
 int	main(int ac, char **av, char **envp)
 {
 	t_pipe	*args;
-	int		infile;
-	int		outfile;
 
 	if (ac < 5)
 		return (EXIT_FAILURE);
-	infile = open(av[1], O_RDONLY);
-	outfile = open(av[ac - 1], O_WRONLY | O_CREAT, 0777);
+	ft_memset(&args, 0, sizeof(t_pipe));
+	args->in_fd = open(av[1], O_RDONLY);
+	args->out_fd = open(av[ac - 1], O_WRONLY | O_CREAT, 0777);
 
-	if (infile < 0 || outfile < 0)
+	if (args->in_fd < 0 || args->out_fd < 0)
 		return (EXIT_FAILURE);
-	args->in_fd = infile;
-	args->out_fd = outfile;
-	printf("%s\n", envp[1]);
 	init_av(ac, av, args, envp);
 	//pipex(infile, outfile, args);
 	
