@@ -57,7 +57,8 @@ static char	*get_cmd_path(t_pipe *args)
 		{
 			cmd_path = ft_strjoin(args->paths[j], "/");
 			cmd_path = ft_strjoin(cmd_path, args->cmd_args[i][1]);
-			if (access(cmd_path, F_OK) == 0)
+			if (access(cmd_path, F_OK) == 0 &&        
+			kkj)
 				return cmd_path;
 			i++;
 		}
@@ -82,17 +83,18 @@ static void	pipex(t_pipe *args)
 	else if (pid1 == 0)	
 	{
 		//child process
+		close(end[0]);
 		args->in_fd = open(args->infile, O_RDONLY);
 		if (args->in_fd < 0)
 			return (EXIT_FAILURE);
 		dup2(args->in_fd, STDIN_FILENO);
-		close(end[0]);
+		close(args->in_fd);
 		execve(get_cmd_path(args));
 	}
 	else
 	{
 		//parent process
-		args->out_fd = open(args->outfile, O_WRONLY | O_CREAT, 0777);
+		args->out_fd = open(args->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0777); //O_APPEND for bonus
 		if (args->out_fd < 0)
 			return (EXIT_FAILURE);
 		dup2(args->out_fd, STDOUT_FILENO);
