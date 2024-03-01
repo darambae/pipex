@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 14:33:43 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/01 15:12:48 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static int	child_process(int *end, char **av)
 
 	close(end[0]);
 	in_fd = open(av[1], O_RDONLY);
-	if (in_fd < 0)
+	if (in_fd < 0 || access(av[1], R_OK) == -1)
 		return (EXIT_FAILURE);
 	if (dup2(in_fd, STDIN_FILENO) < 0 || dup2(end[1], STDOUT_FILENO) < 0)
 	{
@@ -37,7 +37,7 @@ static int	parent_process(int *end, int ac, char **av)
 
 	close(end[1]);
 	out_fd = open(av[ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644); //O_APPEND for bonus
-	if (out_fd < 0)
+	if (out_fd < 0 || access(av[ac - 1], W_OK) == -1)
 		return (EXIT_FAILURE);
 	if (dup2(out_fd, STDOUT_FILENO) < 0 || dup2(end[0], STDIN_FILENO) < 0)
 	{
@@ -81,7 +81,7 @@ int	main(int ac, char **av, char **envp)
 
 	args_cmds = NULL;
 	// check if the num of arguments is more than 5 and files exist or readable or writable
-	if (ac >= 5 && !access(av[1], R_OK) && !access(av[ac - 1], W_OK))
+	if (ac >= 5)
 	{
 		/*getting file path*/
 		args_cmds = trim_cmds(ac, av);
