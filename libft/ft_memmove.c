@@ -1,26 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/27 17:51:52 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 14:31:16 by dabae            ###   ########.fr       */
+/*   Created: 2023/10/03 09:09:13 by dabae             #+#    #+#             */
+/*   Updated: 2023/10/12 14:46:40 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "libft.h"
 
-#ifndef PIPEX_H
-# define PIPEX_H
+void	*ft_memmove(void *dest, const void *src, size_t n)
+{
+	size_t				i;
+	unsigned char		*d;
+	const unsigned char	*s;
 
-# include <stdio.h>
-# include <stdbool.h>
-# include <sys/wait.h>
-# include "libft/libft.h"
-# include "get_next_line/get_next_line.h"
-
-char	***trim_cmds(int ac, char **av);
-char	*get_cmd_path(char *cmd_name, char **envp);
-char    **free_triple_arr(char ***arr);
-
-#endif
+	d = (unsigned char *)dest;
+	s = (unsigned char *)src;
+	i = 0;
+	if (!d && !s)
+		return (NULL);
+	if (s < d)
+		while (++i <= n)
+			d[n - i] = s[n - i];
+	else
+		while (n-- > 0)
+			*(d++) = *(s++);
+	return (dest);
+}

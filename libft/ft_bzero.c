@@ -1,26 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/27 17:51:52 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 14:31:16 by dabae            ###   ########.fr       */
+/*   Created: 2023/10/02 12:12:13 by dabae             #+#    #+#             */
+/*   Updated: 2023/10/05 10:08:26 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "libft.h" 
 
-#ifndef PIPEX_H
-# define PIPEX_H
-
-# include <stdio.h>
-# include <stdbool.h>
-# include <sys/wait.h>
-# include "libft/libft.h"
-# include "get_next_line/get_next_line.h"
-
-char	***trim_cmds(int ac, char **av);
-char	*get_cmd_path(char *cmd_name, char **envp);
-char    **free_triple_arr(char ***arr);
-
-#endif
+void	ft_bzero(void *s, size_t n)
+{
+	ft_memset(s, 0, n);
+}

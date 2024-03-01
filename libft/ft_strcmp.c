@@ -1,26 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/27 17:51:52 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 14:31:16 by dabae            ###   ########.fr       */
+/*   Created: 2024/02/23 14:07:06 by dabae             #+#    #+#             */
+/*   Updated: 2024/02/23 14:07:56 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#include "libft.h"
 
-# include <stdio.h>
-# include <stdbool.h>
-# include <sys/wait.h>
-# include "libft/libft.h"
-# include "get_next_line/get_next_line.h"
+int	ft_strcmp(const char *s1, const char *s2)
+{
+	size_t	i;
 
-char	***trim_cmds(int ac, char **av);
-char	*get_cmd_path(char *cmd_name, char **envp);
-char    **free_triple_arr(char ***arr);
-
-#endif
+	i = 0;
+	while (s1[i] || s2[i])
+	{
+		if (s1[i] != s2[i])
+			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+		i++;
+	}
+	return (0);
+}

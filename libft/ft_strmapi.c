@@ -1,26 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/27 17:51:52 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 14:31:16 by dabae            ###   ########.fr       */
+/*   Created: 2023/10/04 17:50:12 by dabae             #+#    #+#             */
+/*   Updated: 2023/10/05 09:19:38 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "libft.h"
 
-#ifndef PIPEX_H
-# define PIPEX_H
+char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
+{
+	char	*res;
+	int		i;
 
-# include <stdio.h>
-# include <stdbool.h>
-# include <sys/wait.h>
-# include "libft/libft.h"
-# include "get_next_line/get_next_line.h"
-
-char	***trim_cmds(int ac, char **av);
-char	*get_cmd_path(char *cmd_name, char **envp);
-char    **free_triple_arr(char ***arr);
-
-#endif
+	res = (char *)malloc(sizeof(char) * (ft_strlen(s) + 1));
+	if (!res || !s || !f)
+		return (NULL);
+	i = 0;
+	while (s[i])
+	{
+		res[i] = f(i, s[i]);
+		i++;
+	}
+	res[i] = '\0';
+	return (res);
+}

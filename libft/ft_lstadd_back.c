@@ -1,26 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/27 17:51:52 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 14:31:16 by dabae            ###   ########.fr       */
+/*   Created: 2023/10/06 09:46:35 by dabae             #+#    #+#             */
+/*   Updated: 2023/10/06 14:10:12 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "libft.h"
 
-#ifndef PIPEX_H
-# define PIPEX_H
+void	ft_lstadd_back(t_list **lst, t_list *new)
+{
+	t_list	*last;
 
-# include <stdio.h>
-# include <stdbool.h>
-# include <sys/wait.h>
-# include "libft/libft.h"
-# include "get_next_line/get_next_line.h"
-
-char	***trim_cmds(int ac, char **av);
-char	*get_cmd_path(char *cmd_name, char **envp);
-char    **free_triple_arr(char ***arr);
-
-#endif
+	if (!*lst)
+		*lst = new;
+	else
+	{
+		last = ft_lstlast(*lst);
+		last->next = new;
+	}
+}

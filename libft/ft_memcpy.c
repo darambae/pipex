@@ -1,26 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/27 17:51:52 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 14:31:16 by dabae            ###   ########.fr       */
+/*   Created: 2023/10/02 16:34:11 by dabae             #+#    #+#             */
+/*   Updated: 2023/10/12 14:29:37 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "libft.h"
 
-#ifndef PIPEX_H
-# define PIPEX_H
+void	*ft_memcpy(void *dest, const void *src, size_t n)
+{
+	unsigned char	*dest_cpy;
+	unsigned char	*src_cpy;
+	size_t			i;
 
-# include <stdio.h>
-# include <stdbool.h>
-# include <sys/wait.h>
-# include "libft/libft.h"
-# include "get_next_line/get_next_line.h"
-
-char	***trim_cmds(int ac, char **av);
-char	*get_cmd_path(char *cmd_name, char **envp);
-char    **free_triple_arr(char ***arr);
-
-#endif
+	if (dest == src)
+		return (dest);
+	dest_cpy = (unsigned char *)dest;
+	src_cpy = (unsigned char *)src;
+	i = 0;
+	while (i < n)
+	{
+		dest_cpy[i] = src_cpy[i];
+		i++;
+	}
+	return (dest);
+}

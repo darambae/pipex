@@ -1,26 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/27 17:51:52 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 14:31:16 by dabae            ###   ########.fr       */
+/*   Created: 2023/10/04 09:49:57 by dabae             #+#    #+#             */
+/*   Updated: 2023/10/04 10:11:13 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "libft.h"
 
-#ifndef PIPEX_H
-# define PIPEX_H
+char	*ft_strjoin(char const *s1, char const *s2)
+{
+	size_t	len;
+	char	*arr;
 
-# include <stdio.h>
-# include <stdbool.h>
-# include <sys/wait.h>
-# include "libft/libft.h"
-# include "get_next_line/get_next_line.h"
-
-char	***trim_cmds(int ac, char **av);
-char	*get_cmd_path(char *cmd_name, char **envp);
-char    **free_triple_arr(char ***arr);
-
-#endif
+	len = ft_strlen(s1) + ft_strlen(s2);
+	arr = (char *)malloc(sizeof(char) * (len + 1));
+	if (!arr)
+		return (NULL);
+	ft_strlcpy(arr, s1, ft_strlen(s1) + 1);
+	ft_strlcat(arr, s2, len + 1);
+	return (arr);
+}

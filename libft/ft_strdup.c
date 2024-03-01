@@ -1,26 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/27 17:51:52 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 14:31:16 by dabae            ###   ########.fr       */
+/*   Created: 2023/10/03 17:32:16 by dabae             #+#    #+#             */
+/*   Updated: 2023/10/12 11:34:33 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "libft.h"
 
-#ifndef PIPEX_H
-# define PIPEX_H
+char	*ft_strdup(const char *s)
+{
+	char	*arr;
+	int		i;
 
-# include <stdio.h>
-# include <stdbool.h>
-# include <sys/wait.h>
-# include "libft/libft.h"
-# include "get_next_line/get_next_line.h"
+	arr = (char *)malloc(sizeof(char) * (ft_strlen(s) + 1));
+	if (!arr)
+		return (NULL);
+	i = 0;
+	while (s[i])
+	{
+		arr[i] = s[i];
+		i++;
+	}
+	arr[i] = '\0';
+	return (arr);
+}
+/*
+#include <stdio.h>
 
-char	***trim_cmds(int ac, char **av);
-char	*get_cmd_path(char *cmd_name, char **envp);
-char    **free_triple_arr(char ***arr);
-
-#endif
+int	main(int argc, char **argv)
+{
+	(void)argc;
+	printf("%s\n",ft_strdup(argv[1]));
+	return (0);
+}
+*/

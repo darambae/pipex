@@ -6,42 +6,52 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/02/29 19:30:41 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/01 14:33:43 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-#include "ft_printf/ft_printf.h"
-#include "ft_printf/libft/libft.h"
 
-static void	child_process(int *end, t_pipe *args, char **av)
+static int	child_process(int *end, char **av)
 {
+	int in_fd;
+
 	close(end[0]);
-	args->in_fd = open(args->infile, O_RDONLY);
-	if (args->in_fd < 0)
+	in_fd = open(av[1], O_RDONLY);
+	if (in_fd < 0)
 		return (EXIT_FAILURE);
-	;
-	if (dup2(args->in_fd, STDIN_FILENO) < 0)
-		perrpr("dup2 error in child process");
-	close(args->in_fd);
-	execve(get_cmd_path(args->cmd_args[0][0]), av[2], ?);
-}
+	if (dup2(in_fd, STDIN_FILENO) < 0 || dup2(end[1], STDOUT_FILENO) < 0)
+	{
+		perror("dup2 error in child process");
+		return (EXIT_FAILURE);
+	}
 
-static void parent_process(int *end, t_pipe *args, char **av)
-{
+	close(in_fd);
 	close(end[1]);
-	args->out_fd = open(args->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0777); //O_APPEND for bonus
-	if (args->out_fd < 0)
-		return (EXIT_FAILURE);
-	if (dup2(args->out_fd, STDOUT_FILENO) < 0 || dup2(end[0], STDIN_FILENO) < 0)
-		perror("dup2 error in parent process");
-	close(args->out_fd);
-	execve(get_cmd_path(args->cmd_args[0][1]), av[3], ?);
+	return (EXIT_SUCCESS);
 }
 
-static void	pipex(char **av, t_pipe *args, char **envp)
+static int	parent_process(int *end, int ac, char **av)
 {
-	int	end[2];
+	int out_fd;
+
+	close(end[1]);
+	out_fd = open(av[ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644); //O_APPEND for bonus
+	if (out_fd < 0)
+		return (EXIT_FAILURE);
+	if (dup2(out_fd, STDOUT_FILENO) < 0 || dup2(end[0], STDIN_FILENO) < 0)
+	{
+		perror("dup2 error in parent process");
+		return (EXIT_FAILURE);
+	}
+	close(out_fd);
+	close(end[0]);
+	return (EXIT_SUCCESS);
+}
+
+static void	pipex(int ac, char **av, char ***cmds, char **envp)
+{
+	int		end[2];
 	pid_t	pid1;
 
 	if (pipe(end) == -1)
@@ -53,32 +63,40 @@ static void	pipex(char **av, t_pipe *args, char **envp)
 	else if (pid1 == 0)	
 	{
 		//child process
-		child_process(end, args, av);
-		
+		child_process(end, av);
+		if (!get_cmd_path(cmds[0][0], envp) ||
+			execve(get_cmd_path(cmds[0][0], envp), cmds[0], envp) == -1)
+			perror("execve error");
 	}
-	else
-	{
-		//parent process
-		parent_process(end, args, av);
-	}
+	//parent process
+	parent_process(end, ac, av);
+	if (!get_cmd_path(cmds[1][0], envp) ||
+		execve(get_cmd_path(cmds[1][0], envp), cmds[1], envp) == -1)
+		perror("execve error");
 }
 
 int	main(int ac, char **av, char **envp)
 {
-	t_pipe	*args;
+	char	***args_cmds;
 
-	ft_memset(args, 0, sizeof(t_pipe));
-	//check if the num of arguments is more than 5 and files exist or readable or writable
+	args_cmds = NULL;
+	// check if the num of arguments is more than 5 and files exist or readable or writable
 	if (ac >= 5 && !access(av[1], R_OK) && !access(av[ac - 1], W_OK))
 	{
 		/*getting file path*/
-		args->infile = ft_strdup(av[1]);
-		args->outfile = ft_strdup(av[ac - 1]);
-		init_av(ac, av, args);
-		pipex(av, args, envp);
+		args_cmds = trim_cmds(ac, av);
+		if (!args_cmds)
+		{
+			free_triple_arr(args_cmds);
+			return (EXIT_FAILURE);
+		}
+		pipex(ac, av, args_cmds, envp);
 	}
 	else
+	{
 		perror("files error or not enough input given");
-	free(args);
-	return (0);
+		return (EXIT_FAILURE);
+	}
+	free_triple_arr(args_cmds);
+	return (EXIT_SUCCESS);
 }

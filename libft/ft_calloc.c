@@ -1,26 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/27 17:51:52 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 14:31:16 by dabae            ###   ########.fr       */
+/*   Created: 2023/10/03 17:08:53 by dabae             #+#    #+#             */
+/*   Updated: 2023/10/11 15:36:25 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "libft.h" 
 
-#ifndef PIPEX_H
-# define PIPEX_H
+void	*ft_calloc(size_t nmemb, size_t size)
+{
+	void	*arr;
+	size_t	total;
 
-# include <stdio.h>
-# include <stdbool.h>
-# include <sys/wait.h>
-# include "libft/libft.h"
-# include "get_next_line/get_next_line.h"
-
-char	***trim_cmds(int ac, char **av);
-char	*get_cmd_path(char *cmd_name, char **envp);
-char    **free_triple_arr(char ***arr);
-
-#endif
+	total = nmemb * size;
+	if (nmemb == 0 || size == 0)
+		return (malloc(0));
+	else if (total / nmemb != size || total / size != nmemb)
+		return (NULL);
+	else
+	{
+		arr = (void *)malloc(total);
+		if (!arr)
+			return (NULL);
+		ft_bzero(arr, total);
+	}
+	return (arr);
+}

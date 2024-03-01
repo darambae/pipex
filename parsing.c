@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 16:28:29 by dabae             #+#    #+#             */
-/*   Updated: 2024/02/29 19:23:20 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/01 14:30:44 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,25 +47,32 @@ char	*get_cmd_path(char *cmd_name, char **envp)
 		cmd_path = ft_strjoin(cmd_name, cmd_name);
 		if (access(cmd_path, F_OK) == 0 && access(cmd_path, X_OK) == 0)
 		{
-			free(path_arr);
+			ft_free_tab(path_arr);
 			return (cmd_path);
 		}
 		j++;
-		// while (args->cmd_args[i][0])
-		// {
-		// 	cmd_path = ft_strjoin(cmd_path, args->cmd_args[i][0]);
-		// 	if (access(cmd_path, F_OK) == 0 && access(cmd_path, X_OK) == 0)
-		// 		return (cmd_path);
-		// 	i++;
-		// }
 	}
 	free(cmd_path);
-	free(path_arr);
+	ft_free_tab(path_arr);
 	perror("Command not exist or unexecutable");
 	return (NULL);
 }
 
-void	init_av(int ac, char **av, t_pipe *args)
+char	**free_triple_arr(char ***arr)
+{
+	int	i;
+
+	i = 0;
+	while (arr[i])
+	{
+		ft_free_tab(arr[i]);
+		i++;
+	}
+	free(arr);
+	return (NULL);
+}
+
+char	***trim_cmds(int ac, char **av)
 {
 	int		i;
 	char	***cmds;
@@ -75,7 +82,7 @@ void	init_av(int ac, char **av, t_pipe *args)
 	if (!cmds)
 	{
 		free(cmds);
-		return ;
+		return (NULL);
 	}
 	i = 2;
 	while (i < ac - 1)
@@ -84,10 +91,5 @@ void	init_av(int ac, char **av, t_pipe *args)
 		i++;
 	}
 	cmds[i] = NULL;
-	args->cmd_args = cmds;
-	free(cmds);
-	// bonus part
-	if (ft_strcmp("here_doc", av[1]) == 0)
-		args->here_doc = true;
-	args->here_doc = false;
+	return (cmds);
 }
