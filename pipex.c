@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 15:12:48 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/01 15:56:02 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ static void	pipex(int ac, char **av, char ***cmds, char **envp)
 	{
 		//child process
 		child_process(end, av);
+		printf("%s\n", cmds[0][0]);
 		if (!get_cmd_path(cmds[0][0], envp) ||
 			execve(get_cmd_path(cmds[0][0], envp), cmds[0], envp) == -1)
 			perror("execve error");
