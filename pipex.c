@@ -14,10 +14,35 @@
 #include "ft_printf/ft_printf.h"
 #include "ft_printf/libft/libft.h"
 
+static void	child_process(int *end, t_pipe *args, char **av)
+{
+	close(end[0]);
+	args->in_fd = open(args->infile, O_RDONLY);
+	if (args->in_fd < 0)
+		return (EXIT_FAILURE);
+	;
+	if (dup2(args->in_fd, STDIN_FILENO) < 0)
+		perrpr("dup2 error in child process");
+	close(args->in_fd);
+	execve(get_cmd_path(args->cmd_args[0][0]), av[2], ?);
+}
+
+static void parent_process(int *end, t_pipe *args, char **av)
+{
+	close(end[1]);
+	args->out_fd = open(args->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0777); //O_APPEND for bonus
+	if (args->out_fd < 0)
+		return (EXIT_FAILURE);
+	if (dup2(args->out_fd, STDOUT_FILENO) < 0 || dup2(end[0], STDIN_FILENO) < 0)
+		perror("dup2 error in parent process");
+	close(args->out_fd);
+	execve(get_cmd_path(args->cmd_args[0][1]), av[3], ?);
+}
+
 static void	pipex(char **av, t_pipe *args, char **envp)
 {
 	int	end[2];
-	int	pid1;
+	pid_t	pid1;
 
 	if (pipe(end) == -1)
 		perror("pipe error");
@@ -28,25 +53,13 @@ static void	pipex(char **av, t_pipe *args, char **envp)
 	else if (pid1 == 0)	
 	{
 		//child process
-		close(end[0]);
-		args->in_fd = open(args->infile, O_RDONLY);
-		if (args->in_fd < 0)
-			return (EXIT_FAILURE);
-		dup2(args->in_fd, STDIN_FILENO);
-		close(args->in_fd);
-		execve(get_cmd_path(args->cmd_args[0][0]), av[2], ?);
+		child_process(end, args, av);
+		
 	}
 	else
 	{
 		//parent process
-		close(end[1]);
-		args->out_fd = open(args->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0777); //O_APPEND for bonus
-		if (args->out_fd < 0)
-			return (EXIT_FAILURE);
-		dup2(args->out_fd, STDOUT_FILENO);
-		close(args->out_fd);
-		execve(get_cmd_path(args->cmd_args[0][1]), av[3], ?);
-
+		parent_process(end, args, av);
 	}
 }
 
