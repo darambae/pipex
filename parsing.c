@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 16:28:29 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 15:57:20 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/01 18:22:14 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,6 @@ char	***trim_cmds(int ac, char **av)
 		cmds[i - 2] = ft_split(av[i], ' ');
 		i++;
 	}
-	cmds[i] = NULL;
+	cmds[i - 2] = NULL;
 	return (cmds);
 }
