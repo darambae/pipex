@@ -34,17 +34,19 @@ static void	pipex(char **av, t_pipe *args, char **envp)
 			return (EXIT_FAILURE);
 		dup2(args->in_fd, STDIN_FILENO);
 		close(args->in_fd);
-		execve(get_cmd_path(args));
+		execve(get_cmd_path(args->cmd_args[0][0]), av[2], ?);
 	}
 	else
 	{
 		//parent process
+		close(end[1]);
 		args->out_fd = open(args->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0777); //O_APPEND for bonus
 		if (args->out_fd < 0)
 			return (EXIT_FAILURE);
 		dup2(args->out_fd, STDOUT_FILENO);
-		close(end[1]);
-		execve();
+		close(args->out_fd);
+		execve(get_cmd_path(args->cmd_args[0][1]), av[3], ?);
+
 	}
 }
 
