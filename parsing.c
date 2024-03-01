@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 16:28:29 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 14:30:44 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/01 15:25:14 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ char	*get_cmd_path(char *cmd_name, char **envp)
 	while (path_arr[j])
 	{
 		cmd_path = ft_strjoin(path_arr[j], "/");
-		cmd_path = ft_strjoin(cmd_name, cmd_name);
+		cmd_path = ft_strjoin(cmd_path, cmd_name);
 		if (access(cmd_path, F_OK) == 0 && access(cmd_path, X_OK) == 0)
 		{
 			ft_free_tab(path_arr);
