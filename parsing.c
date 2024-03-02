@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 16:28:29 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 18:22:14 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/01 18:32:31 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ char	*get_cmd_path(char *cmd_name, char **envp)
 	while (path_arr[j])
 	{
 		cmd_path = ft_strjoin(path_arr[j], "/");
-		printf("%s\n", cmd_name);
 		cmd_path = ft_strjoin(cmd_path, cmd_name);
 		if (access(cmd_path, F_OK) == 0 && access(cmd_path, X_OK) == 0)
 		{
@@ -89,6 +88,11 @@ char	***trim_cmds(int ac, char **av)
 	while (i < ac - 1)
 	{
 		cmds[i - 2] = ft_split(av[i], ' ');
+		if (!cmds[i - 2])
+		{
+			free_triple_arr(cmds);
+			return (NULL);
+		}
 		i++;
 	}
 	cmds[i - 2] = NULL;

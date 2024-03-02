@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 16:08:44 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/01 18:33:10 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ int	main(int ac, char **av, char **envp)
 	{
 		/*getting file path*/
 		args_cmds = trim_cmds(ac, av);
-		printf("%s\n", args_cmds[0][0]);
 		if (!args_cmds)
 		{
 			free_triple_arr(args_cmds);
