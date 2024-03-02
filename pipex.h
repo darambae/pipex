@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:52 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 14:31:16 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/02 08:25:40 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,6 @@
 
 char	***trim_cmds(int ac, char **av);
 char	*get_cmd_path(char *cmd_name, char **envp);
-char    **free_triple_arr(char ***arr);
+void	free_triple_arr(char ***arr);
 
 #endif

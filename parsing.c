@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 16:28:29 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 18:32:31 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/02 08:24:16 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,18 +58,20 @@ char	*get_cmd_path(char *cmd_name, char **envp)
 	return (NULL);
 }
 
-char	**free_triple_arr(char ***arr)
+void	free_triple_arr(char ***arr)
 {
 	int	i;
 
+	if (!arr)
+		return ;
 	i = 0;
 	while (arr[i])
 	{
 		ft_free_tab(arr[i]);
+		arr[i] = NULL;
 		i++;
 	}
 	free(arr);
-	return (NULL);
 }
 
 char	***trim_cmds(int ac, char **av)
@@ -77,7 +79,6 @@ char	***trim_cmds(int ac, char **av)
 	int		i;
 	char	***cmds;
 
-	/*getting command lines*/
 	cmds = malloc(sizeof(char **) * (ac - 2));
 	if (!cmds)
 	{

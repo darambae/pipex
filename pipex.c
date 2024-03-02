@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/01 18:33:10 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/02 08:15:58 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,14 +62,12 @@ static void	pipex(int ac, char **av, char ***cmds, char **envp)
 		perror("Fork error");
 	else if (pid1 == 0)	
 	{
-		//child process
 		child_process(end, av);
 		printf("%s\n", cmds[0][0]);
 		if (!get_cmd_path(cmds[0][0], envp) ||
 			execve(get_cmd_path(cmds[0][0], envp), cmds[0], envp) == -1)
 			perror("execve error");
 	}
-	//parent process
 	parent_process(end, ac, av);
 	if (!get_cmd_path(cmds[1][0], envp) ||
 		execve(get_cmd_path(cmds[1][0], envp), cmds[1], envp) == -1)
@@ -81,17 +79,20 @@ int	main(int ac, char **av, char **envp)
 	char	***args_cmds;
 
 	args_cmds = NULL;
-	// check if the num of arguments is more than 5 and files exist or readable or writable
 	if (ac >= 5)
 	{
-		/*getting file path*/
 		args_cmds = trim_cmds(ac, av);
 		if (!args_cmds)
 		{
 			free_triple_arr(args_cmds);
 			return (EXIT_FAILURE);
 		}
-		pipex(ac, av, args_cmds, envp);
+		if (ft_strcmp(av[1], "here_doc") == 0 || ac > 5)
+		{
+			//bonus part, need to learn << >>, delimiter
+		}
+		else
+			pipex(ac, av, args_cmds, envp);
 	}
 	else
 	{
