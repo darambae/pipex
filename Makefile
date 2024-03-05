@@ -2,6 +2,7 @@ NAME = pipex
 CC = gcc -g
 CFLAGS = -Wall -Wextra -Werror
 LIBFT = libft/libft.a
+FILES = outfile infile
 GET_NEXT_LINE_DIR = get_next_line
 GET_NEXT_LINE = $(wildcard $(GET_NEXT_LINE_DIR)/*.c)
 SRC = pipex.c parsing.c pipex_bonus.c
@@ -25,6 +26,7 @@ clean:
 fclean: clean
 	$(MAKE) fclean -C ./libft 
 	@$(RM) -f $(NAME)
+	@$(RM) -f $(FILES)
 
 re: fclean all
 

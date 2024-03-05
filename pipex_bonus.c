@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 10:21:08 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/05 14:02:16 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/05 14:30:32 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,14 @@ static int	here_doc_handler(char **av)
 	return (EXIT_SUCCESS);
 }
 
-static int	last_process(int ac, char **av, char **cmds, char **envp)
+static int	last_process(char *outfile, char **cmds, char **envp, bool here)
 {
 	int	out_fd;
 
-	out_fd = open(av[ac - 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
-	if (out_fd < 0 || access(av[ac - 1], W_OK) == -1)
+	out_fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (!here)
+		out_fd = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (out_fd < 0 || access(outfile, W_OK) == -1)
 		return (EXIT_FAILURE);
 	if (dup2(out_fd, STDOUT_FILENO) < 0)
 		error_handler();
@@ -64,6 +66,7 @@ static int	pipe_fork(char **cmds, char **envp)
 	{
 		if (dup2(end[1], STDOUT_FILENO) < 0)
 			error_handler();
+		close(end[0]);
 		close(end[1]);
 		if (!get_cmd_path(cmds[0], envp) ||
 			execve(get_cmd_path(cmds[0], envp), cmds, envp) == -1)
@@ -102,6 +105,6 @@ int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 		if (pipe_fork(cmds[i], envp) == EXIT_FAILURE)
 			return (EXIT_FAILURE);
 	}
-	last_process(ac, av, cmds[i], envp);
+	last_process(av[ac - 1], cmds[i], envp, ft_strcmp(av[1], "here_doc"));
 	return (EXIT_SUCCESS);
 }
