@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 10:21:08 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/05 11:45:48 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/05 14:02:16 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,17 +65,14 @@ static int	pipe_fork(char **cmds, char **envp)
 		if (dup2(end[1], STDOUT_FILENO) < 0)
 			error_handler();
 		close(end[1]);
-		//dubug started in this if conditions
-		if (!get_cmd_path(cmds[0], envp) || execve(
-				get_cmd_path(cmds[0], envp), cmds, envp) == -1)
+		if (!get_cmd_path(cmds[0], envp) ||
+			execve(get_cmd_path(cmds[0], envp), cmds, envp) == -1)
 			error_handler();
 	}
 	if (dup2(end[0], STDIN_FILENO) < 0)
 		error_handler();
 	close(end[0]);
-	if (!get_cmd_path((cmds + 1)[0], envp) ||
-		execve(get_cmd_path((cmds + 1)[0], envp), cmds + 1, envp) == -1)
-		error_handler();
+	close(end[1]);
 	return (EXIT_SUCCESS);
 }
 
