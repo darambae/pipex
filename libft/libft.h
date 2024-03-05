@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/06 15:59:42 by darambae          #+#    #+#             */
-/*   Updated: 2024/03/02 08:24:55 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/05 08:20:36 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 size_t	ft_strlcat(char *dst, const char *src, size_t size);
 int		ft_tolower(int c);
 int		ft_toupper(int c);
-void	ft_free_tab(char **tab);
+char	**ft_free_tab(char **tab);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strrchr(const char *s, int c);
 int		ft_strcmp(const char *s1, const char *s2);

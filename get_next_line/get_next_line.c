@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 11:27:15 by dabae             #+#    #+#             */
-/*   Updated: 2024/02/28 10:32:34 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/04 11:18:34 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,18 +73,18 @@ static	int	found_n(t_line *buf_list)
 static	void	create_list(t_line **buf_list, int fd)
 {
 	char    *buffer;
-		int     bytes_read;
+	int     bytes_read;
 
 	while (!found_n(*buf_list))
 	{
 		buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-			if (!buffer)
+		if (!buffer)
 		{
 			free_list(*buf_list);
-					return ;
+			return ;
 		}
-			bytes_read = read(fd, buffer, BUFFER_SIZE);
-			if (!bytes_read)
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if (!bytes_read)
 		{
 			free(buffer);
 			buffer = malloc(sizeof(char) * 2);
@@ -96,7 +96,7 @@ static	void	create_list(t_line **buf_list, int fd)
 			buffer[0] = '\n';
 			buffer[1] = '\0';
 			add_node(buf_list, buffer);
-					return ;
+			return ;
 		}
 		buffer[bytes_read] = '\0';
 		add_node(buf_list, buffer);

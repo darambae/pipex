@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 16:28:29 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/02 08:24:16 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/04 15:04:59 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,12 @@ char	*get_cmd_path(char *cmd_name, char **envp)
 	ft_free_tab(path_arr);
 	perror("Command not exist or unexecutable");
 	return (NULL);
+}
+
+int	error_handler(void)
+{
+	perror("ERROR");
+	return (EXIT_FAILURE);
 }
 
 void	free_triple_arr(char ***arr)

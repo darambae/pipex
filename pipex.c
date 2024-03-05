@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/02 08:15:58 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/05 08:15:38 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	child_process(int *end, char **av)
 {
-	int in_fd;
+	int	in_fd;
 
 	close(end[0]);
 	in_fd = open(av[1], O_RDONLY);
@@ -33,17 +33,14 @@ static int	child_process(int *end, char **av)
 
 static int	parent_process(int *end, int ac, char **av)
 {
-	int out_fd;
+	int	out_fd;
 
 	close(end[1]);
-	out_fd = open(av[ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644); //O_APPEND for bonus
+	out_fd = open(av[ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (out_fd < 0 || access(av[ac - 1], W_OK) == -1)
 		return (EXIT_FAILURE);
 	if (dup2(out_fd, STDOUT_FILENO) < 0 || dup2(end[0], STDIN_FILENO) < 0)
-	{
-		perror("dup2 error in parent process");
-		return (EXIT_FAILURE);
-	}
+		error_handler();
 	close(out_fd);
 	close(end[0]);
 	return (EXIT_SUCCESS);
@@ -63,7 +60,6 @@ static void	pipex(int ac, char **av, char ***cmds, char **envp)
 	else if (pid1 == 0)	
 	{
 		child_process(end, av);
-		printf("%s\n", cmds[0][0]);
 		if (!get_cmd_path(cmds[0][0], envp) ||
 			execve(get_cmd_path(cmds[0][0], envp), cmds[0], envp) == -1)
 			perror("execve error");
@@ -87,18 +83,17 @@ int	main(int ac, char **av, char **envp)
 			free_triple_arr(args_cmds);
 			return (EXIT_FAILURE);
 		}
-		if (ft_strcmp(av[1], "here_doc") == 0 || ac > 5)
+		if (ac > 5 || ft_strcmp(av[1], "here_doc") == 0)
 		{
-			//bonus part, need to learn << >>, delimiter
+			pipex_bonus(ac, av, args_cmds, envp);
+			if (ft_strcmp(av[1], "here_doc") == 0)
+				unlink("here_doc");
 		}
 		else
 			pipex(ac, av, args_cmds, envp);
 	}
 	else
-	{
-		perror("files error or not enough input given");
-		return (EXIT_FAILURE);
-	}
+		error_handler();
 	free_triple_arr(args_cmds);
 	return (EXIT_SUCCESS);
 }
