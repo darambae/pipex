@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/05 08:15:38 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/05 17:53:29 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,22 @@ static void	pipex(int ac, char **av, char ***cmds, char **envp)
 	if (!get_cmd_path(cmds[1][0], envp) ||
 		execve(get_cmd_path(cmds[1][0], envp), cmds[1], envp) == -1)
 		perror("execve error");
+}
+
+void	free_triple_arr(char ***arr)
+{
+	int	i;
+
+	if (!arr)
+		return ;
+	i = 0;
+	while (arr[i])
+	{
+		ft_free_tab(arr[i]);
+		arr[i] = NULL;
+		i++;
+	}
+	free(arr);
 }
 
 int	main(int ac, char **av, char **envp)

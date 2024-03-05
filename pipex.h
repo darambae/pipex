@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:52 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/04 16:43:34 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/05 17:52:25 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,6 @@ char	*get_cmd_path(char *cmd_name, char **envp);
 void	free_triple_arr(char ***arr);
 int		error_handler(void);
 int		pipex_bonus(int ac, char **av, char ***cmds, char **envp);
+char	**ft_split_special(char const *s, const char *delimiters);
 
 #endif

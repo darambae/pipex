@@ -5,7 +5,7 @@ LIBFT = libft/libft.a
 FILES = outfile infile
 GET_NEXT_LINE_DIR = get_next_line
 GET_NEXT_LINE = $(wildcard $(GET_NEXT_LINE_DIR)/*.c)
-SRC = pipex.c parsing.c pipex_bonus.c
+SRC = pipex.c parsing.c pipex_bonus.c ft_split_special.c
 OBJ = $(SRC:.c=.o) $(GET_NEXT_LINE:.c=.o)
 
 all: $(NAME)
