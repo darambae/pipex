@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 10:21:08 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/05 08:29:58 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/05 11:45:48 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static int	here_doc_handler(char **av)
 		free(line);
 	}
 	close(fd);
-	return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
 
 static int	last_process(int ac, char **av, char **cmds, char **envp)
@@ -65,6 +65,7 @@ static int	pipe_fork(char **cmds, char **envp)
 		if (dup2(end[1], STDOUT_FILENO) < 0)
 			error_handler();
 		close(end[1]);
+		//dubug started in this if conditions
 		if (!get_cmd_path(cmds[0], envp) || execve(
 				get_cmd_path(cmds[0], envp), cmds, envp) == -1)
 			error_handler();
@@ -96,9 +97,7 @@ int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 		if (access(av[1], R_OK) == -1)
 			error_handler();
 	}
-	if (in_fd < 0)
-		return (EXIT_FAILURE);
-	if (dup2(in_fd, STDIN_FILENO) < 0)
+	if (in_fd < 0 || dup2(in_fd, STDIN_FILENO) < 0)
 		return (EXIT_FAILURE);
 	close(in_fd);
 	while (++i < ac - 4)
