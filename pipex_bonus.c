@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 10:21:08 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/05 14:30:32 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/06 09:28:52 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,10 @@ static int	last_process(char *outfile, char **cmds, char **envp, bool here)
 {
 	int	out_fd;
 
-	out_fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (!here)
 		out_fd = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else
+		out_fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (out_fd < 0 || access(outfile, W_OK) == -1)
 		return (EXIT_FAILURE);
 	if (dup2(out_fd, STDOUT_FILENO) < 0)
