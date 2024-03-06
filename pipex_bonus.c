@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 10:21:08 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/06 09:28:52 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/06 11:05:12 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static int	here_doc_handler(char **av)
 	return (EXIT_SUCCESS);
 }
 
-static int	last_process(char *outfile, char **cmds, char **envp, bool here)
+static int	last_process(char **cmds, char **envp, char *outfile, bool here)
 {
 	int	out_fd;
 
@@ -49,13 +49,13 @@ static int	last_process(char *outfile, char **cmds, char **envp, bool here)
 	if (dup2(out_fd, STDOUT_FILENO) < 0)
 		error_handler();
 	close(out_fd);
-	if (!get_cmd_path(cmds[0], envp) || execve(get_cmd_path(cmds[0], envp),
-			cmds, envp) == -1)
+	if (!get_cmd_path(cmds[0], envp) || execve(get_cmd_path(cmds[0],
+			envp), cmds, envp) == -1)
 		error_handler();
 	return (EXIT_SUCCESS);
 }
 
-static int	pipe_fork(char **cmds, char **envp)
+static int	pipe_fork(int ac, int i, char **cmds, char **envp)
 {
 	int		end[2];
 	pid_t	pid;
@@ -67,17 +67,32 @@ static int	pipe_fork(char **cmds, char **envp)
 	{
 		if (dup2(end[1], STDOUT_FILENO) < 0)
 			error_handler();
-		close(end[0]);
 		close(end[1]);
-		if (!get_cmd_path(cmds[0], envp) ||
-			execve(get_cmd_path(cmds[0], envp), cmds, envp) == -1)
+		if (!get_cmd_path(cmds[0], envp) || execve(get_cmd_path(cmds[0], envp),
+				cmds, envp) == -1)
 			error_handler();
 	}
 	if (dup2(end[0], STDIN_FILENO) < 0)
 		error_handler();
 	close(end[0]);
-	close(end[1]);
+	if (i == ac - 5)
+		close(end[1]);
 	return (EXIT_SUCCESS);
+}
+
+static int	open_file(char *filename)
+{
+	int	fd;
+
+	fd = open(filename, O_RDONLY);
+	if (fd < 0)
+		return (EXIT_FAILURE);
+	if (ft_strcmp(filename, "here_doc") != 0)
+	{
+		if (access(filename, R_OK) == -1)
+			error_handler();
+	}
+	return (fd);
 }
 
 int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
@@ -90,22 +105,21 @@ int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 	{
 		i = 0;
 		here_doc_handler(av);
-		in_fd = open("here_doc", O_RDONLY);
 	}
-	else
-	{
-		in_fd = open(av[1], O_RDONLY);
-		if (access(av[1], R_OK) == -1)
-			error_handler();
-	}
-	if (in_fd < 0 || dup2(in_fd, STDIN_FILENO) < 0)
+	in_fd = open_file(av[1]);
+	if (in_fd == EXIT_FAILURE || dup2(in_fd, STDIN_FILENO) < 0)
 		return (EXIT_FAILURE);
 	close(in_fd);
-	while (++i < ac - 4)
+	while (++i < ac - 3)
 	{
-		if (pipe_fork(cmds[i], envp) == EXIT_FAILURE)
-			return (EXIT_FAILURE);
+		if (i == ac - 4)
+			last_process(cmds[i], envp, av[ac - 1],
+				ft_strcmp(av[1], "here_doc"));
+		else
+		{
+			if (pipe_fork(ac, i, cmds[i], envp) == EXIT_FAILURE)
+				return (EXIT_FAILURE);
+		}
 	}
-	last_process(av[ac - 1], cmds[i], envp, ft_strcmp(av[1], "here_doc"));
 	return (EXIT_SUCCESS);
 }
