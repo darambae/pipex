@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/06 15:02:54 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/06 15:39:57 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int	main(int ac, char **av, char **envp)
 		}
 		if (ac > 5 || ft_strcmp(av[1], "here_doc") == 0)
 		{
-			args_cmds = trim_cmds(ac, av + 1);
+			args_cmds = trim_cmds(ac - 1, av + 1);
 			pipex_bonus(ac, av, args_cmds, envp);
 			if (ft_strcmp(av[1], "here_doc") == 0)
 				unlink("here_doc");

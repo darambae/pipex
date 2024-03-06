@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 10:21:08 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/06 15:26:45 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/06 15:45:43 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,7 +213,5 @@ int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 		error_handler();
 	close(end[0]); // Close read end in parent
 	close(end[1]); // Close write end in parent
-	while (i-- >= 0)
-		wait(NULL);
 	return (EXIT_SUCCESS);
 }
