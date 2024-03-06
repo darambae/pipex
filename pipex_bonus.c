@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 10:21:08 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/06 11:24:18 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/06 11:30:57 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,14 @@ static int	pipe_fork(int ac, int i, char **cmds, char **envp)
 	int		end[2];
 	pid_t	pid;
 
+	pid = fork();
+	if (pipe(end) == -1 || pid < 0)
+		error_handler();
 	if (i == ac - 4)
 	{
 		close(end[1]);
 		return (EXIT_SUCCESS);
 	}
-	pid = fork();
-	if (pipe(end) == -1 || pid < 0)
-		error_handler();
 	if (pid == 0)
 	{
 		if (dup2(end[1], STDOUT_FILENO) < 0)
