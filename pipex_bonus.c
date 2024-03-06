@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 10:21:08 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/06 11:05:12 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/06 11:24:18 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static int	here_doc_handler(char **av)
 	return (EXIT_SUCCESS);
 }
 
-static int	last_process(char **cmds, char **envp, char *outfile, bool here)
+static int	last_process(char *outfile, bool here)
 {
 	int	out_fd;
 
@@ -49,9 +49,6 @@ static int	last_process(char **cmds, char **envp, char *outfile, bool here)
 	if (dup2(out_fd, STDOUT_FILENO) < 0)
 		error_handler();
 	close(out_fd);
-	if (!get_cmd_path(cmds[0], envp) || execve(get_cmd_path(cmds[0],
-			envp), cmds, envp) == -1)
-		error_handler();
 	return (EXIT_SUCCESS);
 }
 
@@ -60,6 +57,11 @@ static int	pipe_fork(int ac, int i, char **cmds, char **envp)
 	int		end[2];
 	pid_t	pid;
 
+	if (i == ac - 4)
+	{
+		close(end[1]);
+		return (EXIT_SUCCESS);
+	}
 	pid = fork();
 	if (pipe(end) == -1 || pid < 0)
 		error_handler();
@@ -75,8 +77,6 @@ static int	pipe_fork(int ac, int i, char **cmds, char **envp)
 	if (dup2(end[0], STDIN_FILENO) < 0)
 		error_handler();
 	close(end[0]);
-	if (i == ac - 5)
-		close(end[1]);
 	return (EXIT_SUCCESS);
 }
 
@@ -112,14 +112,12 @@ int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 	close(in_fd);
 	while (++i < ac - 3)
 	{
-		if (i == ac - 4)
-			last_process(cmds[i], envp, av[ac - 1],
-				ft_strcmp(av[1], "here_doc"));
-		else
-		{
-			if (pipe_fork(ac, i, cmds[i], envp) == EXIT_FAILURE)
-				return (EXIT_FAILURE);
-		}
+		if (pipe_fork(ac, i, cmds[i], envp) == EXIT_FAILURE)
+			return (EXIT_FAILURE);
 	}
+	last_process(av[ac - 1], ft_strcmp(av[1], "here_doc"));
+	if (!get_cmd_path(cmds[i][0], envp) || execve(get_cmd_path(cmds[i][0],
+			envp), cmds[i], envp) == -1)
+		error_handler();
 	return (EXIT_SUCCESS);
 }
