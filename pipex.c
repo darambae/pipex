@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/07 15:57:51 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/07 16:03:36 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static int	parent_process(int *end, int ac, char **av)
 	return (EXIT_SUCCESS);
 }
 
-static void	pipex(int ac, char **av, char ***cmds, char **envp)
+static int	pipex(int ac, char **av, char ***cmds, char **envp)
 {
 	int		end[2];
 	pid_t	pid1;
@@ -69,6 +69,7 @@ static void	pipex(int ac, char **av, char ***cmds, char **envp)
 			perror("execve error");
 		}
 		free(cmd_path);
+		return (EXIT_SUCCESS);
 	}
 	parent_process(end, ac, av);
 	cmd_path = get_cmd_path(cmds[1][0], envp);
@@ -78,6 +79,7 @@ static void	pipex(int ac, char **av, char ***cmds, char **envp)
 		perror("execve error");
 	}
 	free(cmd_path);
+	return (EXIT_FAILURE);
 }
 
 void	free_triple_arr(char ***arr)
