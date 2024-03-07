@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/07 16:27:45 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/07 17:29:23 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,36 +53,24 @@ static int	pipex(int ac, char **av, char ***cmds, char **envp)
 
 	cmd_path = NULL;
 	if (pipe(end) == -1)
-		perror("pipe error");
-	//end[0] = read end, end[1] = write end
+		error_handler();
 	pid1 = fork();
 	if (pid1 < 0)
-		perror("Fork error");
+		error_handler();
 	else if (pid1 == 0)
 	{
 		child_process(end, av);
 		cmd_path = get_cmd_path(cmds[0][0], envp);
-		if (!cmd_path)
-		{
-			free(cmd_path);
-			perror("execve error");
-			return (EXIT_FAILURE);
-		}
-		execve(cmd_path, cmds[0], envp);
+		if (!cmd_path || execve(cmd_path, cmds[0], envp) == -1)
+			error_handler();
 		free(cmd_path);
-		return (EXIT_SUCCESS);
 	}
 	parent_process(end, ac, av);
 	cmd_path = get_cmd_path(cmds[1][0], envp);
-	if (!cmd_path)
-	{
-		free(cmd_path);
-		perror("execve error");
-		return (EXIT_FAILURE);
-	}
-	execve(cmd_path, cmds[1], envp);
+	if (!cmd_path || execve(cmd_path, cmds[1], envp) == -1)
+		error_handler();
 	free(cmd_path);
-	return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
 
 void	free_triple_arr(char ***arr)
