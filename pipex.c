@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/07 14:19:34 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/07 15:57:51 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,9 @@ static void	pipex(int ac, char **av, char ***cmds, char **envp)
 {
 	int		end[2];
 	pid_t	pid1;
+	char	*cmd_path;
 
+	cmd_path = NULL;
 	if (pipe(end) == -1)
 		perror("pipe error");
 	//end[0] = read end, end[1] = write end
@@ -60,14 +62,22 @@ static void	pipex(int ac, char **av, char ***cmds, char **envp)
 	else if (pid1 == 0)	
 	{
 		child_process(end, av);
-		if (!get_cmd_path(cmds[0][0], envp) ||
-			execve(get_cmd_path(cmds[0][0], envp), cmds[0], envp) == -1)
+		cmd_path = get_cmd_path(cmds[0][0], envp);
+		if (!cmd_path || execve(cmd_path, cmds[0], envp) == -1)
+		{
+			free(cmd_path);
 			perror("execve error");
+		}
+		free(cmd_path);
 	}
 	parent_process(end, ac, av);
-	if (!get_cmd_path(cmds[1][0], envp) ||
-		execve(get_cmd_path(cmds[1][0], envp), cmds[1], envp) == -1)
+	cmd_path = get_cmd_path(cmds[1][0], envp);
+	if (!cmd_path || execve(cmd_path, cmds[1], envp) == -1)
+	{
+		free(cmd_path);
 		perror("execve error");
+	}
+	free(cmd_path);
 }
 
 void	free_triple_arr(char ***arr)
