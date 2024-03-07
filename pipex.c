@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/07 16:09:19 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/07 16:27:45 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ static int	child_process(int *end, char **av)
 		perror("dup2 error in child process");
 		return (EXIT_FAILURE);
 	}
-
 	close(in_fd);
 	close(end[1]);
 	return (EXIT_SUCCESS);
@@ -59,27 +58,29 @@ static int	pipex(int ac, char **av, char ***cmds, char **envp)
 	pid1 = fork();
 	if (pid1 < 0)
 		perror("Fork error");
-	else if (pid1 == 0)	
+	else if (pid1 == 0)
 	{
 		child_process(end, av);
 		cmd_path = get_cmd_path(cmds[0][0], envp);
-		if (!cmd_path || execve(cmd_path, cmds[0], envp) == -1)
+		if (!cmd_path)
 		{
 			free(cmd_path);
 			perror("execve error");
 			return (EXIT_FAILURE);
 		}
+		execve(cmd_path, cmds[0], envp);
 		free(cmd_path);
 		return (EXIT_SUCCESS);
 	}
 	parent_process(end, ac, av);
 	cmd_path = get_cmd_path(cmds[1][0], envp);
-	if (!cmd_path || execve(cmd_path, cmds[1], envp) == -1)
+	if (!cmd_path)
 	{
 		free(cmd_path);
 		perror("execve error");
 		return (EXIT_FAILURE);
 	}
+	execve(cmd_path, cmds[1], envp);
 	free(cmd_path);
 	return (EXIT_FAILURE);
 }
