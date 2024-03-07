@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/07 16:03:36 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/07 16:09:19 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ static int	pipex(int ac, char **av, char ***cmds, char **envp)
 		{
 			free(cmd_path);
 			perror("execve error");
+			return (EXIT_FAILURE);
 		}
 		free(cmd_path);
 		return (EXIT_SUCCESS);
@@ -77,6 +78,7 @@ static int	pipex(int ac, char **av, char ***cmds, char **envp)
 	{
 		free(cmd_path);
 		perror("execve error");
+		return (EXIT_FAILURE);
 	}
 	free(cmd_path);
 	return (EXIT_FAILURE);
