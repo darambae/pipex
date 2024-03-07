@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 10:21:08 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/06 15:45:43 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/07 13:27:53 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,42 +46,35 @@ static int	last_process(char *outfile, bool here)
 		out_fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (out_fd < 0 || access(outfile, W_OK) == -1)
 		return (EXIT_FAILURE);
-	if (dup2(out_fd, STDOUT_FILENO) < 0)
-		error_handler();
+	dup2(out_fd, STDOUT_FILENO);
 	close(out_fd);
+	if (here)
+		unlink("here_doc");
 	return (EXIT_SUCCESS);
 }
 
-// static int	pipe_fork(int ac, int i, char **cmds, char **envp)
-// {
-// 	int		end[2];
-// 	pid_t	pid;
+static void	pipe_fork(int i, int num_cmd, char ***cmds, char **envp)
+{
+	int		end[2];
+	pid_t	pid;
 
-// 	pid = fork();
-// 	if (pipe(end) == -1 || pid < 0)
-// 		error_handler();
-// 	if (i == ac - 4)
-// 	{
-// 		if (dup2(end[0], STDIN_FILENO) < 0)
-// 			error_handler();
-// 		close(end[0]);
-// 		close(end[1]);
-// 		return (EXIT_SUCCESS);
-// 	}
-// 	if (pid == 0)
-// 	{
-// 		if (dup2(end[1], STDOUT_FILENO) < 0)
-// 			error_handler();
-// 		close(end[1]);
-// 		if (!get_cmd_path(cmds[0], envp) || execve(get_cmd_path(cmds[0], envp),
-// 				cmds, envp) == -1)
-// 			error_handler();
-// 	}
-// 	if (dup2(end[0], STDIN_FILENO) < 0)
-// 		error_handler();
-// 	close(end[0]);
-// 	return (EXIT_SUCCESS);
-// }
+	if (pipe(end) == -1)
+		error_handler();
+	pid = fork();
+	if (pid < 0)
+		error_handler();
+	if (pid == 0)
+	{
+		close(end[0]);
+		dup2(end[1], STDOUT_FILENO);
+		close(end[1]);
+		execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp);
+	}
+	dup2(end[0], STDIN_FILENO);
+	close(end[1]);
+	if (i == num_cmd - 2)
+		close(end[0]);
+}
 
 static int	open_file(char *filename)
 {
@@ -98,64 +91,61 @@ static int	open_file(char *filename)
 	return (fd);
 }
 
-// int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
-// {
-// 	int		i;
-// 	int		in_fd;
-
-// 	i = -1;
-// 	if (ft_strcmp(av[1], "here_doc") == 0)
-// 	{
-// 		i = 0;
-// 		here_doc_handler(av);
-// 	}
-// 	in_fd = open_file(av[1]);
-// 	if (in_fd == EXIT_FAILURE || dup2(in_fd, STDIN_FILENO) < 0)
-// 	{
-// 		close(in_fd);
-// 		return (EXIT_FAILURE);
-// 	}
-// 	close(in_fd);
-// 	while (++i < ac - 3)
-// 	{
-// 		if (pipe_fork(ac, i, cmds[i], envp) == EXIT_FAILURE)
-// 			return (EXIT_FAILURE);
-// 	}
-// 	last_process(av[ac - 1], ft_strcmp(av[1], "here_doc"));
-// 	if (!get_cmd_path(cmds[i][0], envp) || execve(get_cmd_path(cmds[i][0],
-// 			envp), cmds[i], envp) == -1)
-// 		error_handler();
-// 	return (EXIT_SUCCESS);
-// }
-
-static int	fork_loop(int i, int *end, char **cmds, char **envp)
+int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 {
-	pid_t	pid;
+	int		i;
+	int		in_fd;
+	int 	num_cmd;
 
-	pid = fork();
-	if (pid < 0)
-		error_handler();
-	if (pid == 0)
+	num_cmd = ac - 3;
+	if (ft_strcmp(av[1], "here_doc") == 0)
 	{
-		if (i == 0)
-		{
-			close(end[0]);
-			dup2(end[1], STDOUT_FILENO);
-			close(end[1]);
-		}
-		else
-		{
-			close(end[1]);
-			dup2(end[0], STDIN_FILENO);
-			close(end[0]);
-		}
-		if (!get_cmd_path(cmds[0], envp) || execve(get_cmd_path(cmds[0], envp),
-				cmds, envp) == -1)
-			error_handler();
-		exit(EXIT_FAILURE);
+		here_doc_creater(av);
+		num_cmd = ac - 4;
 	}
+	in_fd = open_file(av[1]);
+	if (in_fd == EXIT_FAILURE || dup2(in_fd, STDIN_FILENO) < 0)
+	{
+		close(in_fd);
+		return (EXIT_FAILURE);
+	}
+	close(in_fd);
+	i = -1;
+	while (++i < num_cmd - 1)
+		pipe_fork(i, num_cmd, cmds, envp);
+	last_process(av[ac - 1], 1);
+	execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp);
 	return (EXIT_SUCCESS);
 }
+
+// static int	fork_loop(int i, int *end)
+// {
+// 	pid_t	pid;
+
+// 	pid = fork();
+// 	if (pid < 0)
+// 		error_handler();
+// 	if (pid == 0)
+// 	{
+// 		if (i == 0)
+// 		{
+// 			close(end[0]);
+// 			dup2(end[1], STDOUT_FILENO);
+// 			close(end[1]);
+// 		}
+// 		else
+// 		{
+// 			close(end[1]);
+// 			dup2(end[0], STDIN_FILENO);
+// 			close(end[0]);
+// 		}
+// 		if (!get_cmd_path(cmds[0], envp) || execve(get_cmd_path(cmds[0], envp),
+// 				cmds, envp) == -1)
+// 			error_handler();
+// 		return (EXIT_FAILURE);
+// 	}
+// 	return (EXIT_SUCCESS);
+// }
 
 // int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 // {
@@ -188,30 +178,36 @@ static int	fork_loop(int i, int *end, char **cmds, char **envp)
 // 	close(end[0]);
 // 	return (EXIT_SUCCESS);
 // }
-int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
-{
-	int		end[2];
-	int		in_fd;
-	int		i;
+// int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
+// {
+// 	int		end[2];
+// 	int		in_fd;
+// 	int		i;
 
-	if (pipe(end) == -1)
-		error_handler();
-	if (ft_strcmp(av[1], "here_doc") == 0)
-		here_doc_creater(av);
-	in_fd = open_file(av[1]);
-	if (dup2(in_fd, STDIN_FILENO) < 0)
-	{
-		close(in_fd);
-		return (EXIT_FAILURE);
-	}
-	close(in_fd);
-	i = -1;
-	while (++i < ac - 4)
-		fork_loop(i, end, cmds[i], envp);
-	last_process(av[ac - 1], ft_strcmp(av[1], "here_doc") == 0);
-	if (!get_cmd_path(cmds[i][0], envp) || execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp) == -1)
-		error_handler();
-	close(end[0]); // Close read end in parent
-	close(end[1]); // Close write end in parent
-	return (EXIT_SUCCESS);
-}
+// 	if (pipe(end) == -1)
+// 		error_handler();
+// 	if (ft_strcmp(av[1], "here_doc") == 0)
+// 		here_doc_creater(av);
+// 	in_fd = open_file(av[1]);
+// 	if (dup2(in_fd, STDIN_FILENO) < 0)
+// 	{
+// 		close(in_fd);
+// 		return (EXIT_FAILURE);
+// 	}
+// 	close(in_fd);
+// 	i = -1;
+// 	while (++i < ac - 5)
+// 	{
+// 		fork_loop(i, end);
+// 		if (!get_cmd_path(cmds[i][0], envp) || execve(get_cmd_path(cmds[i][0], envp),
+// 				cmds[i], envp) == -1)
+// 			error_handler();	
+// 	}
+// 	last_process(av[ac - 1], ft_strcmp(av[1], "here_doc") == 0);
+// 	if (!get_cmd_path(cmds[i][0], envp) || execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp) == -1)
+// 		error_handler();
+// 	close(end[0]); // Close read end in parent
+// 	close(end[1]); // Close write end in parent
+	
+// 	return (EXIT_SUCCESS);
+// }
