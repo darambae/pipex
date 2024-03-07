@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/07 13:41:09 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/07 14:19:34 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,22 +90,25 @@ int	main(int ac, char **av, char **envp)
 {
 	char	***args_cmds;
 
-	args_cmds = NULL;
-	if (ft_strcmp(av[1], "here_doc") == 0)
-		args_cmds = trim_cmds(ac - 1, av + 1);
-	else
-		args_cmds = trim_cmds(ac, av);
-	if (!args_cmds)
+	if (ac > 4)
 	{
+		args_cmds = NULL;
+		if (ft_strcmp(av[1], "here_doc") == 0)
+			args_cmds = trim_cmds(ac - 1, av + 1);
+		else
+			args_cmds = trim_cmds(ac, av);
+		if (!args_cmds)
+		{
+			free_triple_arr(args_cmds);
+			return (EXIT_FAILURE);
+		}
+		if (ac == 5)
+			pipex(ac, av, args_cmds, envp);
+		else if (ac > 5 || ft_strcmp(av[1], "here_doc") == 0)
+			pipex_bonus(ac, av, args_cmds, envp);
+		else
+			error_handler();
 		free_triple_arr(args_cmds);
-		return (EXIT_FAILURE);
 	}
-	if (ac == 5)
-		pipex(ac, av, args_cmds, envp);
-	else if (ac > 5 || ft_strcmp(av[1], "here_doc") == 0)
-		pipex_bonus(ac, av, args_cmds, envp);
-	else
-		error_handler();
-	free_triple_arr(args_cmds);
 	return (EXIT_SUCCESS);
 }

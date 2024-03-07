@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 10:21:08 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/07 14:05:32 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/07 15:17:33 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ static int	last_process(char *outfile, bool here)
 	return (EXIT_SUCCESS);
 }
 
-static void	pipe_fork(int i, int num_cmd, char ***cmds, char **envp)
+static int	pipe_fork(int i, int num_cmd, char ***cmds, char **envp)
 {
 	int		end[2];
 	pid_t	pid;
@@ -69,11 +69,13 @@ static void	pipe_fork(int i, int num_cmd, char ***cmds, char **envp)
 		dup2(end[1], STDOUT_FILENO);
 		close(end[1]);
 		execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp);
+		return (EXIT_SUCCESS);
 	}
 	dup2(end[0], STDIN_FILENO);
 	close(end[1]);
 	if (i == num_cmd - 2)
 		close(end[0]);
+	return (EXIT_SUCCESS);
 }
 
 static int	open_file(char *filename)
@@ -95,7 +97,7 @@ int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 {
 	int		i;
 	int		in_fd;
-	int 	num_cmd;
+	int		num_cmd;
 
 	num_cmd = ac - 3;
 	if (ft_strcmp(av[1], "here_doc") == 0)
