@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 10:21:08 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/07 15:17:33 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/08 10:32:34 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ static int	here_doc_creater(char **av)
 		if (!line || ft_strcmp(line, av[2]) == 0)
 		{
 			free(line);
+			close(fd);
 			break ;
 		}
 		ft_putendl_fd(line, fd);
@@ -53,7 +54,7 @@ static int	last_process(char *outfile, bool here)
 	return (EXIT_SUCCESS);
 }
 
-static int	pipe_fork(int i, int num_cmd, char ***cmds, char **envp)
+static int	redirect(int i, int num_cmd, char ***cmds, char **envp)
 {
 	int		end[2];
 	pid_t	pid;
@@ -114,7 +115,7 @@ int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 	close(in_fd);
 	i = -1;
 	while (++i < num_cmd - 1)
-		pipe_fork(i, num_cmd, cmds, envp);
+		redirect(i, num_cmd, cmds, envp);
 	last_process(av[ac - 1], ft_strcmp(av[1], "here_doc") == 0);
 	execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp);
 	return (EXIT_SUCCESS);
