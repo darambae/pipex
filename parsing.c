@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 16:28:29 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/07 15:37:22 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/08 11:41:15 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,22 @@ int	error_handler(void)
 	return (EXIT_FAILURE);
 }
 
+void	free_triple_arr(char ***arr)
+{
+	int	i;
+
+	if (!arr)
+		return ;
+	i = 0;
+	while (arr[i])
+	{
+		ft_free_tab(arr[i]);
+		arr[i] = NULL;
+		i++;
+	}
+	free(arr);
+}
+
 char	***trim_cmds(int ac, char **av)
 {
 	int		i;
@@ -78,7 +94,7 @@ char	***trim_cmds(int ac, char **av)
 	i = 2;
 	while (i < ac - 1)
 	{
-		cmds[i - 2] = ft_split_special(av[i], " '");
+		cmds[i - 2] = ft_split_special(av[i], " \"'");
 		if (!cmds[i - 2])
 		{
 			free_triple_arr(cmds);

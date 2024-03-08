@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/08 10:36:20 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/08 13:30:52 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,42 +73,20 @@ static int	pipex(int ac, char **av, char ***cmds, char **envp)
 	return (EXIT_SUCCESS);
 }
 
-void	free_triple_arr(char ***arr)
-{
-	int	i;
-
-	if (!arr)
-		return ;
-	i = 0;
-	while (arr[i])
-	{
-		ft_free_tab(arr[i]);
-		arr[i] = NULL;
-		i++;
-	}
-	free(arr);
-}
-
 int	main(int ac, char **av, char **envp)
 {
 	char	***args_cmds;
 
-	if (ac > 4)
+	if (ac == 5)
 	{
 		args_cmds = NULL;
-		if (ft_strcmp(av[1], "here_doc") == 0)
-			args_cmds = trim_cmds(ac - 1, av + 1);
-		else
-			args_cmds = trim_cmds(ac, av);
+		args_cmds = trim_cmds(ac, av);
 		if (!args_cmds)
 		{
 			free_triple_arr(args_cmds);
 			return (EXIT_FAILURE);
 		}
-		if (ac == 5)
-			pipex(ac, av, args_cmds, envp);
-		else if (ac > 5 || ft_strcmp(av[1], "here_doc") == 0)
-			pipex_bonus(ac, av, args_cmds, envp);
+		pipex(ac, av, args_cmds, envp);
 		free_triple_arr(args_cmds);
 	}
 	else
