@@ -6,11 +6,14 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 17:19:17 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/06 09:14:41 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/08 16:41:19 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+/* ft_count_arr : to count the number of the words in the string seperated 
+ by delimiters */
 
 static int	ft_count_arr(char const *s, const char *delimiters)
 {
@@ -33,6 +36,9 @@ static int	ft_count_arr(char const *s, const char *delimiters)
 	return (count);
 }
 
+/* ft_size_wd : to count the length of a word till encountering 
+ the delimiters */
+
 static int	ft_size_wd(char const *s, const char *delimiters, int i)
 {
 	int	size;
@@ -45,6 +51,9 @@ static int	ft_size_wd(char const *s, const char *delimiters, int i)
 	}
 	return (size);
 }
+
+/* ft_split_special: to manage the cases of the arguments with space, 
+ single quote and double quote. */
 
 char	**ft_split_special(char const *s, const char *delimiters)
 {
@@ -74,5 +83,3 @@ char	**ft_split_special(char const *s, const char *delimiters)
 	arrs[z] = NULL;
 	return (arrs);
 }
-
-

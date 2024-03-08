@@ -6,13 +6,15 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/08 13:30:52 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/08 18:00:50 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static int	child_process(int *end, char **av)
+/* child_dup : duplicate infile to STDIN and write end to STDOUT.*/
+
+static int	child_dup(int *end, char **av)
 {
 	int	in_fd;
 
@@ -30,7 +32,10 @@ static int	child_process(int *end, char **av)
 	return (EXIT_SUCCESS);
 }
 
-static int	parent_process(int *end, int ac, char **av)
+/* parent_dup : duplicate the output(read end) of the first command line 
+to STDIN and outfile to STDOUT.*/
+
+static int	parent_dup(int *end, int ac, char **av)
 {
 	int	out_fd;
 
@@ -44,6 +49,9 @@ static int	parent_process(int *end, int ac, char **av)
 	close(end[0]);
 	return (EXIT_SUCCESS);
 }
+
+/* by pipe() and fork(), make child & parent process and execute the two 
+command lines respectively */
 
 static int	pipex(int ac, char **av, char ***cmds, char **envp)
 {
@@ -59,19 +67,22 @@ static int	pipex(int ac, char **av, char ***cmds, char **envp)
 		error_handler();
 	else if (pid1 == 0)
 	{
-		child_process(end, av);
+		child_dup(end, av);
 		cmd_path = get_cmd_path(cmds[0][0], envp);
 		if (!cmd_path || execve(cmd_path, cmds[0], envp) == -1)
 			error_handler();
 		free(cmd_path);
 	}
-	parent_process(end, ac, av);
+	parent_dup(end, ac, av);
 	cmd_path = get_cmd_path(cmds[1][0], envp);
 	if (!cmd_path || execve(cmd_path, cmds[1], envp) == -1)
 		error_handler();
 	free(cmd_path);
 	return (EXIT_SUCCESS);
 }
+
+/* Retrieve commands only if 4 arguments(excluding its program name) 
+are given. */
 
 int	main(int ac, char **av, char **envp)
 {

@@ -6,11 +6,13 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 16:28:29 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/08 11:41:15 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/08 16:49:32 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+/* whole_paths : to retrieve all the paths of commands in the environment */
 
 static char	**whole_paths(char **envp)
 {
@@ -32,6 +34,9 @@ static char	**whole_paths(char **envp)
 		return (NULL);
 	return (path_arr);
 }
+
+/* get_cmd_path : to verify if the command is executable and it exists, if so, 
+ return the right path for the command */
 
 char	*get_cmd_path(char *cmd_name, char **envp)
 {
@@ -79,6 +84,9 @@ void	free_triple_arr(char ***arr)
 	}
 	free(arr);
 }
+
+/* trim_cmds : first, manage the commands line with space, single quote and 
+double quote. And then, assign each trimmed command in the array. */
 
 char	***trim_cmds(int ac, char **av)
 {

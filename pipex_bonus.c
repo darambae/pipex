@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 10:21:08 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/08 11:43:55 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/08 18:01:06 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static int	here_doc_creater(char **av)
 	char	*line;
 	int		fd;
 
-	fd = open("here_doc", O_WRONLY | O_CREAT | O_APPEND, 0644);
+	fd = open("here_doc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
 		error_handler();
 	while (1)
@@ -37,7 +37,11 @@ static int	here_doc_creater(char **av)
 	return (EXIT_SUCCESS);
 }
 
-static int	last_process(char *outfile, bool here)
+/* outfile_handler : if here_doc and outfile exist, 
+append the output in outfile and delete 'here_doc' file.
+If it isn't here_doc case, but outfile exists, truncate the outfile. */
+
+static int	outfile_handler(char *outfile, bool here)
 {
 	int	out_fd;
 
@@ -53,6 +57,8 @@ static int	last_process(char *outfile, bool here)
 		unlink("here_doc");
 	return (EXIT_SUCCESS);
 }
+
+/* redirect : redirect STDIN and STDOUT using pipe() and fork(). */
 
 static int	redirect(int i, int num_cmd, char ***cmds, char **envp)
 {
@@ -78,6 +84,8 @@ static int	redirect(int i, int num_cmd, char ***cmds, char **envp)
 		close(end[0]);
 	return (EXIT_SUCCESS);
 }
+/* open_file : using the first argument, open the file. if it isn't here_doc,
+ double check if the file exists and readable. */
 
 static int	open_file(char *filename)
 {
@@ -93,6 +101,9 @@ static int	open_file(char *filename)
 	}
 	return (fd);
 }
+
+/* if the first argument is 'here_doc', create a file called 'here_doc'
+ and the rest of the process is the same */
 
 int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 {
@@ -116,7 +127,7 @@ int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 	i = -1;
 	while (++i < num_cmd - 1)
 		redirect(i, num_cmd, cmds, envp);
-	last_process(av[ac - 1], ft_strcmp(av[1], "here_doc") == 0);
+	outfile_handler(av[ac - 1], ft_strcmp(av[1], "here_doc") == 0);
 	execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp);
 	return (EXIT_SUCCESS);
 }

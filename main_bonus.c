@@ -6,11 +6,13 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 11:48:50 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/08 13:29:50 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/08 16:42:32 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
+
+/* Handling only more than commands or here_doc */
 
 int	main(int ac, char **av, char **envp)
 {
@@ -35,4 +37,3 @@ int	main(int ac, char **av, char **envp)
 		error_handler();
 	return (EXIT_SUCCESS);
 }
-

@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 10:23:50 by dabae             #+#    #+#             */
-/*   Updated: 2024/02/28 10:30:13 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/08 13:50:13 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ typedef struct s_line
 
 char	*get_next_line(int fd);
 
-int	line_len(t_line *buf_list);
+int		line_len(t_line *buf_list);
 
 void	empty_attach_node(t_line **buf_list, char *rest);
 
