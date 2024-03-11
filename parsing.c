@@ -66,7 +66,7 @@ char	*get_cmd_path(char *cmd_name, char **envp)
 int	error_handler(void)
 {
 	perror("ERROR");
-	return (EXIT_FAILURE);
+	exit(1);
 }
 
 void	free_triple_arr(char ***arr)

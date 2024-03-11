@@ -21,12 +21,9 @@ static int	child_dup(int *end, char **av)
 	close(end[0]);
 	in_fd = open(av[1], O_RDONLY);
 	if (in_fd < 0 || access(av[1], R_OK) == -1)
-		return (EXIT_FAILURE);
+		error_handler();
 	if (dup2(in_fd, STDIN_FILENO) < 0 || dup2(end[1], STDOUT_FILENO) < 0)
-	{
-		perror("dup2 error in child process");
-		return (EXIT_FAILURE);
-	}
+		error_handler();
 	close(in_fd);
 	close(end[1]);
 	return (EXIT_SUCCESS);
@@ -42,7 +39,7 @@ static int	parent_dup(int *end, int ac, char **av)
 	close(end[1]);
 	out_fd = open(av[ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (out_fd < 0 || access(av[ac - 1], W_OK) == -1)
-		return (EXIT_FAILURE);
+		error_handler();
 	if (dup2(out_fd, STDOUT_FILENO) < 0 || dup2(end[0], STDIN_FILENO) < 0)
 		error_handler();
 	close(out_fd);
@@ -99,8 +96,9 @@ int	main(int ac, char **av, char **envp)
 		}
 		pipex(ac, av, args_cmds, envp);
 		free_triple_arr(args_cmds);
+		return (EXIT_SUCCESS);
 	}
 	else
 		error_handler();
-	return (EXIT_SUCCESS);
+	return (EXIT_FAILURE);
 }

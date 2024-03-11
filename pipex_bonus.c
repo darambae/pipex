@@ -24,7 +24,7 @@ static int	here_doc_creater(char **av)
 	{
 		write(1, "pipe heredoc>", 13);
 		line = get_next_line(STDIN_FILENO);
-		if (!line || ft_strcmp(line, av[2]) == 0)
+		if (!line || ft_strncmp(line, av[2], ft_strlen(av[2])) == 0)
 		{
 			free(line);
 			close(fd);

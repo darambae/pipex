@@ -5,14 +5,30 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 10:23:27 by dabae             #+#    #+#             */
-/*   Updated: 2024/02/28 10:33:21 by dabae            ###   ########.fr       */
+/*   Created: 2023/11/13 12:07:55 by dabae             #+#    #+#             */
+/*   Updated: 2023/11/24 09:17:13 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "get_next_line.h"
 
-int	line_len(t_line *buf_list)
+int	get_strlen(char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+
+t_line	*ft_lastnode(t_line *buf_list)
+{
+	while (buf_list && buf_list->next)
+		buf_list = buf_list->next;
+	return (buf_list);
+}
+
+void	prep_line(char **line, t_line *buf_list)
 {
 	int	i;
 	int	j;
@@ -21,93 +37,16 @@ int	line_len(t_line *buf_list)
 	while (buf_list)
 	{
 		i = 0;
-		while (buf_list->str_tmp[i] && i < BUFFER_SIZE)
+		while (buf_list->str_tmp[i] && buf_list->str_tmp[i] != '\n')
 		{
-			if (buf_list->str_tmp[i] == '\n')
-				return (j);
 			i++;
 			j++;
 		}
+		if (buf_list->str_tmp[i] == '\n')
+			j++;
 		buf_list = buf_list->next;
 	}
-	return (-1);
-}
-
-void	empty_attach_node(t_line **buf_list, char *rest)
-{
-	t_line	*tmp;
-
-	if (*buf_list)
-	{
-		while ((*buf_list)->next)
-		{
-			tmp = (*buf_list)->next;
-			free((*buf_list)->str_tmp);
-			free(*buf_list);
-			*buf_list = tmp;
-		}
-		free((*buf_list)->str_tmp);
-		free(*buf_list);
-		*buf_list = NULL;
-	}
-	else
-	{
-		*buf_list = malloc(sizeof(t_line));
-		if (*buf_list)
-		{
-			(*buf_list)->str_tmp = rest;
-			(*buf_list)->next = NULL;
-		}
-		else
-			free(rest);
-	}
-}
-
-void	add_node(t_line **buf_list, char *buffer)
-{
-	t_line	*new;
-	t_line	*tmp;
-
-	new = malloc(sizeof(t_line));
-	if (!new)
-	{
-		free(buffer);
-		return ;
-	}
-	new->str_tmp = buffer;
-	new->next = NULL;
-	if (*buf_list)
-	{
-		tmp = *buf_list;	
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = new;
-	}
-	else
-		*buf_list = new;
-}
-
-void	copy_rest(t_line *last_node, char **rest)
-{
-	int	i;
-	int	rest_len;
-
-	if (!last_node)
-		return ;
-	i = 0;
-	while (last_node->str_tmp[i] && last_node->str_tmp[i] != '\n')
-		i++;
-	if (last_node->str_tmp[i] != '\n')
-		return ;
-	rest_len = 0;
-	while (last_node->str_tmp[i + rest_len + 1])
-		rest_len++;
-	*rest = malloc(sizeof(char) * (rest_len + 1));
-	if (!*rest)
-		return ;
-	(*rest)[rest_len] = '\0';
-	while (--rest_len >= 0)
-		(*rest)[rest_len] = last_node->str_tmp[i + rest_len + 1];
+	*line = malloc(sizeof(char) * (j + 1));
 }
 
 void	free_list(t_line *buf_list)
@@ -121,4 +60,22 @@ void	free_list(t_line *buf_list)
 		free(tmp->str_tmp);
 		free(tmp);
 	}
+}
+
+int	found_n(t_line *buf_list)
+{
+	int		i;
+	t_line	*last;
+
+	if (!buf_list)
+		return (0);
+	last = ft_lastnode(buf_list);
+	i = 0;
+	while (last->str_tmp[i])
+	{
+		if (last->str_tmp[i] == '\n')
+			return (1);
+		i++;
+	}
+	return (0);
 }
