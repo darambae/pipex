@@ -30,8 +30,12 @@ static char	**whole_paths(char **envp)
 		}
 		j++;
 	}
-	if (!whole_path || !path_arr)
+	free(whole_path);
+	if (!path_arr)
+	{
+		ft_free_tab(path_arr);
 		return (NULL);
+	}
 	return (path_arr);
 }
 
@@ -42,14 +46,16 @@ char	*get_cmd_path(char *cmd_name, char **envp)
 {
 	int		j;
 	char	*cmd_path;
+	char	*tmp;
 	char	**path_arr;
 
 	path_arr = whole_paths(envp);
 	j = 0;
 	while (path_arr[j])
 	{
-		cmd_path = ft_strjoin(path_arr[j], "/");
-		cmd_path = ft_strjoin(cmd_path, cmd_name);
+		tmp = ft_strjoin(path_arr[j], "/");
+		cmd_path = ft_strjoin(tmp, cmd_name);
+		free(tmp);
 		if (access(cmd_path, F_OK) == 0 && access(cmd_path, X_OK) == 0)
 		{
 			ft_free_tab(path_arr);
@@ -59,14 +65,13 @@ char	*get_cmd_path(char *cmd_name, char **envp)
 		j++;
 	}
 	ft_free_tab(path_arr);
-	perror("Command not exist or unexecutable");
 	return (NULL);
 }
 
-int	error_handler(void)
+int	error_handler(char *arr)
 {
-	perror("ERROR");
-	exit(1);
+	free(arr);
+	return (EXIT_FAILURE);
 }
 
 void	free_triple_arr(char ***arr)

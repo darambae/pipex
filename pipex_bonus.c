@@ -75,7 +75,8 @@ static int	redirect(int i, int num_cmd, char ***cmds, char **envp)
 		close(end[0]);
 		dup2(end[1], STDOUT_FILENO);
 		close(end[1]);
-		execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp);
+		if (execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp) == -1)
+			return (EXIT_FAILURE);
 		return (EXIT_SUCCESS);
 	}
 	dup2(end[0], STDIN_FILENO);
@@ -97,7 +98,7 @@ static int	open_file(char *filename)
 	if (ft_strcmp(filename, "here_doc") != 0)
 	{
 		if (access(filename, R_OK) == -1)
-			error_handler();
+			return (EXIT_FAILURE);
 	}
 	return (fd);
 }
@@ -128,6 +129,7 @@ int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 	while (++i < num_cmd - 1)
 		redirect(i, num_cmd, cmds, envp);
 	outfile_handler(av[ac - 1], ft_strcmp(av[1], "here_doc") == 0);
-	execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp);
+	if (execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp) == -1)
+		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
