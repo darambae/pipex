@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/08 11:48:50 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/08 16:42:32 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/11 16:30:55 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,12 @@ int	main(int ac, char **av, char **envp)
 		if (!args_cmds)
 		{
 			free_triple_arr(args_cmds);
-			return (EXIT_FAILURE);
+			exit(1);
 		}
 		pipex_bonus(ac, av, args_cmds, envp);
 		free_triple_arr(args_cmds);
 	}
 	else
-		return (EXIT_FAILURE);
+		err_msg_exit("Not enough arguments");
 	return (EXIT_SUCCESS);
 }

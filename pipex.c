@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/08 18:00:50 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/11 16:29:28 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ static int	child_dup(int *end, char **av)
 	close(end[0]);
 	in_fd = open(av[1], O_RDONLY);
 	if (in_fd < 0 || access(av[1], R_OK) == -1)
-		return (EXIT_FAILURE);
+		err_msg_exit("Unable to open file");
 	if (dup2(in_fd, STDIN_FILENO) < 0 || dup2(end[1], STDOUT_FILENO) < 0)
-		return (EXIT_FAILURE);
+		exit(1);
 	close(in_fd);
 	close(end[1]);
 	return (EXIT_SUCCESS);
@@ -39,9 +39,12 @@ static int	parent_dup(int *end, int ac, char **av)
 	close(end[1]);
 	out_fd = open(av[ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (out_fd < 0 || access(av[ac - 1], W_OK) == -1)
-		return (EXIT_FAILURE);
+	{
+		perror("unable to open outfile");
+		exit(1);
+	}
 	if (dup2(out_fd, STDOUT_FILENO) < 0 || dup2(end[0], STDIN_FILENO) < 0)
-		return (EXIT_FAILURE);
+		exit(1);
 	close(out_fd);
 	close(end[0]);
 	return (EXIT_SUCCESS);
@@ -57,8 +60,8 @@ static int	execute_cmd(char **cmds, char **envp)
 	cmd_path = get_cmd_path(cmds[0], envp);
 	if (!cmd_path || execve(cmd_path, cmds, envp) == -1)
 	{
-		free (cmd_path);
-		return (EXIT_FAILURE);
+		free(cmd_path);
+		err_msg_exit("command not found");
 	}
 	free(cmd_path);
 	return (EXIT_SUCCESS);
@@ -79,15 +82,12 @@ static int	pipex(int ac, char **av, char ***cmds, char **envp)
 		return (EXIT_FAILURE);
 	else if (pid1 == 0)
 	{
-		if (child_dup(end, av) == EXIT_FAILURE)
-			perror("can't find infile or duplicate");
-		if (execute_cmd(cmds[0], envp) == EXIT_FAILURE)
-			return (EXIT_FAILURE);
+		child_dup(end, av);
+		execute_cmd(cmds[0], envp);
 	}
 	parent_dup(end, ac, av);
-	if (execute_cmd(cmds[1], envp) == EXIT_FAILURE)
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
+	execute_cmd(cmds[1], envp);
+	exit(0);
 }
 
 /* Retrieve commands only if 4 arguments(excluding its program name) 
@@ -110,6 +110,9 @@ int	main(int ac, char **av, char **envp)
 		free_triple_arr(args_cmds);
 	}
 	else
-		return (EXIT_FAILURE);
+	{
+		perror("Invalid arguments");
+		exit(1);
+	}
 	return (EXIT_SUCCESS);
 }

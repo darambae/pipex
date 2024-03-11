@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 10:21:08 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/08 18:01:06 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/11 16:35:28 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,21 @@
 static int	here_doc_creater(char **av)
 {
 	char	*line;
+	char	*delimiter;
 	int		fd;
 
 	fd = open("here_doc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
-		error_handler();
+		exit(1);
+	delimiter = ft_strjoin(av[2], "\n");
 	while (1)
 	{
 		write(1, "pipe heredoc>", 13);
 		line = get_next_line(STDIN_FILENO);
-		if (!line || ft_strncmp(line, av[2], ft_strlen(av[2])) == 0)
+		if (!line || ft_strcmp(line, delimiter) == 0)
 		{
 			free(line);
+			free(delimiter);
 			close(fd);
 			break ;
 		}
@@ -50,7 +53,7 @@ static int	outfile_handler(char *outfile, bool here)
 	else
 		out_fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (out_fd < 0 || access(outfile, W_OK) == -1)
-		return (EXIT_FAILURE);
+		exit(1);
 	dup2(out_fd, STDOUT_FILENO);
 	close(out_fd);
 	if (here)
@@ -66,17 +69,17 @@ static int	redirect(int i, int num_cmd, char ***cmds, char **envp)
 	pid_t	pid;
 
 	if (pipe(end) == -1)
-		error_handler();
+		exit(1);
 	pid = fork();
 	if (pid < 0)
-		error_handler();
+		exit(1);
 	if (pid == 0)
 	{
 		close(end[0]);
 		dup2(end[1], STDOUT_FILENO);
 		close(end[1]);
 		if (execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp) == -1)
-			return (EXIT_FAILURE);
+			exit(1);
 		return (EXIT_SUCCESS);
 	}
 	dup2(end[0], STDIN_FILENO);
@@ -122,7 +125,7 @@ int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 	if (in_fd == EXIT_FAILURE || dup2(in_fd, STDIN_FILENO) < 0)
 	{
 		close(in_fd);
-		return (EXIT_FAILURE);
+		err_msg_exit("Invalid file");
 	}
 	close(in_fd);
 	i = -1;
@@ -130,6 +133,6 @@ int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 		redirect(i, num_cmd, cmds, envp);
 	outfile_handler(av[ac - 1], ft_strcmp(av[1], "here_doc") == 0);
 	if (execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp) == -1)
-		return (EXIT_FAILURE);
+		err_msg_exit("Unable to execute");
 	return (EXIT_SUCCESS);
 }
