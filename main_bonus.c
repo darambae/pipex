@@ -34,6 +34,6 @@ int	main(int ac, char **av, char **envp)
 		free_triple_arr(args_cmds);
 	}
 	else
-		error_handler();
+		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
