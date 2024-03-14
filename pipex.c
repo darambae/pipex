@@ -21,9 +21,17 @@ static int	child_dup(int *end, char **av)
 	close(end[0]);
 	in_fd = open(av[1], O_RDONLY);
 	if (in_fd < 0 || access(av[1], R_OK) == -1)
+	{
+		close(in_fd);
+		close(end[1]);
 		err_msg_exit("Unable to open file");
+	}
 	if (dup2(in_fd, STDIN_FILENO) < 0 || dup2(end[1], STDOUT_FILENO) < 0)
-		exit(1);
+	{
+		close(in_fd);
+		close(end[1]);
+		err_msg_exit("Unable to duplicate");
+	}
 	close(in_fd);
 	close(end[1]);
 	return (EXIT_SUCCESS);
@@ -40,11 +48,16 @@ static int	parent_dup(int *end, int ac, char **av)
 	out_fd = open(av[ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (out_fd < 0 || access(av[ac - 1], W_OK) == -1)
 	{
-		perror("unable to open outfile");
-		exit(1);
+		close(out_fd);
+		close(end[0]);
+		err_msg_exit("Unable to open outfile");
 	}
 	if (dup2(out_fd, STDOUT_FILENO) < 0 || dup2(end[0], STDIN_FILENO) < 0)
-		exit(1);
+	{
+		close(out_fd);
+		close(end[0]);
+		err_msg_exit("Unable to duplicate");
+	}
 	close(out_fd);
 	close(end[0]);
 	return (EXIT_SUCCESS);
@@ -61,7 +74,7 @@ static int	execute_cmd(char **cmds, char **envp)
 	if (!cmd_path || execve(cmd_path, cmds, envp) == -1)
 	{
 		free(cmd_path);
-		err_msg_exit("command not found");
+		return (EXIT_FAILURE);
 	}
 	free(cmd_path);
 	return (EXIT_SUCCESS);
@@ -83,10 +96,18 @@ static int	pipex(int ac, char **av, char ***cmds, char **envp)
 	else if (pid1 == 0)
 	{
 		child_dup(end, av);
-		execute_cmd(cmds[0], envp);
+		if (execute_cmd(cmds[0], envp) == EXIT_FAILURE)
+		{
+			free_triple_arr(cmds);
+			err_msg_exit("command not found");
+		}
 	}
 	parent_dup(end, ac, av);
-	execute_cmd(cmds[1], envp);
+	if (execute_cmd(cmds[1], envp) == EXIT_FAILURE)
+	{
+		free_triple_arr(cmds);
+		err_msg_exit("command not found");
+	}
 	exit(0);
 }
 
@@ -108,11 +129,8 @@ int	main(int ac, char **av, char **envp)
 		}
 		pipex(ac, av, args_cmds, envp);
 		free_triple_arr(args_cmds);
+		return (EXIT_SUCCESS);
 	}
 	else
-	{
-		perror("Invalid arguments");
-		exit(1);
-	}
-	return (EXIT_SUCCESS);
+		err_msg_exit("Invalid arguments");
 }

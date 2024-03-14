@@ -32,8 +32,8 @@ int	main(int ac, char **av, char **envp)
 		}
 		pipex_bonus(ac, av, args_cmds, envp);
 		free_triple_arr(args_cmds);
+		return (EXIT_SUCCESS);
 	}
 	else
 		err_msg_exit("Not enough arguments");
-	return (EXIT_SUCCESS);
 }

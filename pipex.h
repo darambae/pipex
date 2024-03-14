@@ -17,6 +17,7 @@
 # include <stdbool.h>
 # include <sys/wait.h>
 # include <sys/fcntl.h>
+# include <errno.h>
 # include "libft/libft.h"
 
 char	***trim_cmds(int ac, char **av);

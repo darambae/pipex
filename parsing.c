@@ -65,12 +65,12 @@ char	*get_cmd_path(char *cmd_name, char **envp)
 		j++;
 	}
 	ft_free_tab(path_arr);
-	err_msg_exit("Invalid command");
 	return (NULL);
 }
 
 void	err_msg_exit(char *msg)
 {
+	errno = 1;
 	perror(msg);
 	exit(1);
 }

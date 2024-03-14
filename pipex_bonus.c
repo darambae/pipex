@@ -78,8 +78,11 @@ static int	redirect(int i, int num_cmd, char ***cmds, char **envp)
 		close(end[0]);
 		dup2(end[1], STDOUT_FILENO);
 		close(end[1]);
-		if (execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp) == -1)
-			exit(1);
+		if (!get_cmd_path(cmds[i][0], envp) || execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp) == -1)
+		{
+			free_triple_arr(cmds);
+			err_msg_exit("Invalid or unexecutable command");
+		}
 		return (EXIT_SUCCESS);
 	}
 	dup2(end[0], STDIN_FILENO);
@@ -125,6 +128,7 @@ int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 	if (in_fd == EXIT_FAILURE || dup2(in_fd, STDIN_FILENO) < 0)
 	{
 		close(in_fd);
+		free_triple_arr(cmds);
 		err_msg_exit("Invalid file");
 	}
 	close(in_fd);
@@ -132,7 +136,10 @@ int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 	while (++i < num_cmd - 1)
 		redirect(i, num_cmd, cmds, envp);
 	outfile_handler(av[ac - 1], ft_strcmp(av[1], "here_doc") == 0);
-	if (execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp) == -1)
-		err_msg_exit("Unable to execute");
+	if (!get_cmd_path(cmds[i][0], envp) || execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp) == -1)
+	{
+		free_triple_arr(cmds);
+		err_msg_exit("Invalid command or unable to execute");
+	}
 	return (EXIT_SUCCESS);
 }
