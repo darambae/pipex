@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 12:07:55 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/14 15:05:26 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/14 15:17:48 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,9 @@ int	get_strlen(char *s)
 
 t_line	*ft_lastnode(t_line *buf_list)
 {
-	t_line	*current = buf_list;
+	t_line	*current;
+
+	current = buf_list;
 	while (current && current->next)
 		current = current->next;
 	return (current);

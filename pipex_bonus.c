@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 10:21:08 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/11 16:35:28 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/14 15:59:06 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ static int	here_doc_creater(char **av)
 			free(line);
 			free(delimiter);
 			close(fd);
+			get_next_line(-1);
 			break ;
 		}
 		ft_putendl_fd(line, fd);
@@ -77,11 +78,9 @@ static int	redirect(int i, int num_cmd, char ***cmds, char **envp)
 		close(end[0]);
 		dup2(end[1], STDOUT_FILENO);
 		close(end[1]);
-		if (!get_cmd_path(cmds[i][0], envp) || execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp) == -1)
-		{
-			free_triple_arr(cmds);
-			err_msg_exit("Invalid or unexecutable command");
-		}
+		if (!get_cmd_path(cmds[i][0], envp) ||
+			execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp) == -1)
+			err_msg_exit("Invalid or unexecutable command", cmds);
 		return (EXIT_SUCCESS);
 	}
 	dup2(end[0], STDIN_FILENO);
@@ -127,18 +126,15 @@ int	pipex_bonus(int ac, char **av, char ***cmds, char **envp)
 	if (in_fd == EXIT_FAILURE || dup2(in_fd, STDIN_FILENO) < 0)
 	{
 		close(in_fd);
-		free_triple_arr(cmds);
-		err_msg_exit("Invalid file");
+		err_msg_exit("Invalid file", cmds);
 	}
 	close(in_fd);
 	i = -1;
 	while (++i < num_cmd - 1)
 		redirect(i, num_cmd, cmds, envp);
 	outfile_handler(av[ac - 1], ft_strcmp(av[1], "here_doc") == 0);
-	if (!get_cmd_path(cmds[i][0], envp) || execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp) == -1)
-	{
-		free_triple_arr(cmds);
-		err_msg_exit("Invalid command or unable to execute");
-	}
+	if (!get_cmd_path(cmds[i][0], envp) ||
+		execve(get_cmd_path(cmds[i][0], envp), cmds[i], envp) == -1)
+		err_msg_exit("Invalid command or unable to execute", cmds);
 	return (EXIT_SUCCESS);
 }

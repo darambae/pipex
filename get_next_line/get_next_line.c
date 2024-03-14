@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 12:07:09 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/14 15:09:26 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/14 15:16:25 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,7 @@ static	void	clean_keep_rest(t_line **buf_list)
 
 	new = malloc(sizeof(t_line));
 	if (!buf_list || !new)
-	{
-		free(new);
 		return ;
-	}
 	new->next = NULL;
 	last = ft_lastnode(*buf_list);
 	i = 0;
@@ -34,10 +31,7 @@ static	void	clean_keep_rest(t_line **buf_list)
 		i++;
 	new->str_tmp = malloc(sizeof(char) * (get_strlen(last->str_tmp) - i + 1));
 	if (!new->str_tmp)
-	{
-		free(new);
 		return ;
-	}
 	j = 0;
 	while (last->str_tmp[i])
 		new->str_tmp[j++] = last->str_tmp[i++];
@@ -82,21 +76,17 @@ static void	add_node(t_line **buf_list, char *buffer, int bytes_read)
 
 	new = malloc(sizeof(t_line));
 	if (!new)
-	{
-		free(buffer);
 		return ;
-	}
 	new->str_tmp = malloc(sizeof(char) * (bytes_read + 1));
-	if (new->str_tmp == NULL)
-	{
-		free(new);
-		free(buffer);
-		return ;
-	}
 	new->next = NULL;
-	i = -1;
-	while (buffer[++i] && i < bytes_read)
+	if (new->str_tmp == NULL)
+		return ;
+	i = 0;
+	while (buffer[i] && i < bytes_read)
+	{
 		new->str_tmp[i] = buffer[i];
+		i++;
+	}
 	new->str_tmp[i] = '\0';
 	if (*buf_list == NULL)
 	{

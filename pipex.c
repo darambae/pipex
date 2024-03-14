@@ -6,7 +6,7 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 17:51:57 by dabae             #+#    #+#             */
-/*   Updated: 2024/03/11 16:29:28 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/14 16:02:16 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,13 @@ static int	child_dup(int *end, char **av)
 	{
 		close(in_fd);
 		close(end[1]);
-		err_msg_exit("Unable to open file");
+		err_msg_exit("Unable to open file", NULL);
 	}
 	if (dup2(in_fd, STDIN_FILENO) < 0 || dup2(end[1], STDOUT_FILENO) < 0)
 	{
 		close(in_fd);
 		close(end[1]);
-		err_msg_exit("Unable to duplicate");
+		err_msg_exit("Unable to duplicate", NULL);
 	}
 	close(in_fd);
 	close(end[1]);
@@ -50,13 +50,13 @@ static int	parent_dup(int *end, int ac, char **av)
 	{
 		close(out_fd);
 		close(end[0]);
-		err_msg_exit("Unable to open outfile");
+		err_msg_exit("Unable to open outfile", NULL);
 	}
 	if (dup2(out_fd, STDOUT_FILENO) < 0 || dup2(end[0], STDIN_FILENO) < 0)
 	{
 		close(out_fd);
 		close(end[0]);
-		err_msg_exit("Unable to duplicate");
+		err_msg_exit("Unable to duplicate", NULL);
 	}
 	close(out_fd);
 	close(end[0]);
@@ -97,17 +97,11 @@ static int	pipex(int ac, char **av, char ***cmds, char **envp)
 	{
 		child_dup(end, av);
 		if (execute_cmd(cmds[0], envp) == EXIT_FAILURE)
-		{
-			free_triple_arr(cmds);
-			err_msg_exit("command not found");
-		}
+			err_msg_exit("command not found", cmds);
 	}
 	parent_dup(end, ac, av);
 	if (execute_cmd(cmds[1], envp) == EXIT_FAILURE)
-	{
-		free_triple_arr(cmds);
-		err_msg_exit("command not found");
-	}
+		err_msg_exit("command not found", cmds);
 	exit(0);
 }
 
@@ -132,5 +126,5 @@ int	main(int ac, char **av, char **envp)
 		return (EXIT_SUCCESS);
 	}
 	else
-		err_msg_exit("Invalid arguments");
+		err_msg_exit("Invalid arguments", NULL);
 }
