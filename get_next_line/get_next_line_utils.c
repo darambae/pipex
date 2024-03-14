@@ -6,9 +6,10 @@
 /*   By: dabae <dabae@student.42perpignan.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 12:07:55 by dabae             #+#    #+#             */
-/*   Updated: 2023/11/24 09:17:13 by dabae            ###   ########.fr       */
+/*   Updated: 2024/03/14 15:05:26 by dabae            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "get_next_line.h"
 
 int	get_strlen(char *s)
