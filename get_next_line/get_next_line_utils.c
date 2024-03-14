@@ -23,9 +23,10 @@ int	get_strlen(char *s)
 
 t_line	*ft_lastnode(t_line *buf_list)
 {
-	while (buf_list && buf_list->next)
-		buf_list = buf_list->next;
-	return (buf_list);
+	t_line	*current = buf_list;
+	while (current && current->next)
+		current = current->next;
+	return (current);
 }
 
 void	prep_line(char **line, t_line *buf_list)

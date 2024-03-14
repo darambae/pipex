@@ -11,43 +11,6 @@
 /* ************************************************************************** */
 #include "get_next_line.h"
 
-// static void clean_keep_rest(t_line **buf_list) {
-//     if (!buf_list || !*buf_list) // Check if buf_list is NULL or empty
-//         return;
-
-//     t_line *last = ft_lastnode(*buf_list);
-
-//     // If last->str_tmp is NULL or empty, no need to proceed
-//     if (!last->str_tmp || !last->str_tmp[0])
-//         return;
-
-//     int i = 0;
-//     // Find the position of '\n' or end of string
-//     while (last->str_tmp[i] && last->str_tmp[i] != '\n')
-//         i++;
-
-//     // If the last character is '\n', increment i to skip it
-//     if (last->str_tmp[i] == '\n')
-//         i++;
-
-//     // Calculate the length of the remaining string
-//     size_t len = get_strlen(last->str_tmp + i);
-
-//     // Allocate memory for the new string
-//     char *new_str = malloc(sizeof(char) * (len + 1));
-//     if (!new_str)
-//         return; // Memory allocation failed
-
-//     // Copy the remaining string (after '\n') to new_str
-//     ft_strlcpy(new_str, last->str_tmp + i, get_strlen(last->str_tmp + 1));
-
-//     // Free the existing str_tmp in last
-//     free(last->str_tmp);
-
-//     // Assign new_str to last->str_tmp
-//     last->str_tmp = new_str;
-// }
-
 static	void	clean_keep_rest(t_line **buf_list)
 {
 	t_line	*last;
@@ -60,8 +23,6 @@ static	void	clean_keep_rest(t_line **buf_list)
 		return ;
 	new->next = NULL;
 	last = ft_lastnode(*buf_list);
-	if (!last->str_tmp[0])
-		return ;
 	i = 0;
 	while (last->str_tmp[i] && last->str_tmp[i] != '\n')
 		i++;

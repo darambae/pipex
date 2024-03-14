@@ -36,7 +36,6 @@ static int	here_doc_creater(char **av)
 		ft_putendl_fd(line, fd);
 		free(line);
 	}
-	close(fd);
 	return (EXIT_SUCCESS);
 }
 
