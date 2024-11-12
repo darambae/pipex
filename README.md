@@ -5,7 +5,6 @@
 
 - [Introduction](#introduction)
 - [Features](#features)
-- [Installation](#installation)
 - [Usage](#usage)
 - [Important Functions](#important-functions)
 - [Parent and Child Processes](#parent-and-child-processes)
@@ -25,26 +24,6 @@
 - Redirects standard input and output between files and commands.
 - Includes robust error handling for file access and command execution.
 - **Bonus**: Implements multiple command pipes and `here_doc` functionality for reading from standard input until a specific delimiter is reached.
-
----
-
-## Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/pipex.git
-   cd pipex
-   ```
-
-2. Compile the project using `make`:
-   ```bash
-   make
-   ```
-
-3. Compile with bonus using `make bonus`:
-   ```bash
-   make bonus
-   ```
 
 ---
 
