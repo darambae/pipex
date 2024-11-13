@@ -1,6 +1,10 @@
 
 # pipex
 
+### Language
+-[Français](./readme_fr.md)
+-[한국어](./readme_kr.md)
+
 ## Table of Contents
 
 - [Introduction](#introduction)
